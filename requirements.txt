@@ -1,9 +1,7 @@
 absl-py==0.10.0
-aiohttp==3.6.2
 argon2-cffi==20.1.0
 astunparse==1.6.3
 async-generator==1.10
-async-timeout==3.0.1
 attrs==20.2.0
 backcall==0.2.0
 bleach==3.2.1
@@ -16,7 +14,7 @@ decorator==4.4.2
 defusedxml==0.6.0
 entrypoints==0.3
 gast==0.3.3
-google-auth==1.22.0
+google-auth==1.22.1
 google-auth-oauthlib==0.4.1
 google-pasta==0.2.0
 grpcio==1.32.0
@@ -25,7 +23,6 @@ idna==2.10
 ipykernel==5.3.4
 ipython==7.18.1
 ipython-genutils==0.2.0
-ipywidgets==7.5.1
 jedi==0.17.2
 Jinja2==2.11.2
 json5==0.9.5
@@ -37,14 +34,13 @@ jupyterlab-pygments==0.1.2
 jupyterlab-server==1.2.0
 Keras-Preprocessing==1.1.2
 kiwisolver==1.2.0
-Markdown==3.2.2
+Markdown==3.3
 MarkupSafe==1.1.1
 matplotlib==3.3.2
 mistune==0.8.4
 mne==0.21.0
-multidict==4.7.6
 nbclient==0.5.0
-nbconvert==6.0.6
+nbconvert==6.0.7
 nbformat==5.0.7
 nest-asyncio==1.4.1
 notebook==6.1.4
@@ -89,6 +85,4 @@ urllib3==1.25.10
 wcwidth==0.2.5
 webencodings==0.5.1
 Werkzeug==1.0.1
-widgetsnbextension==3.5.1
 wrapt==1.12.1
-yarl==1.6.0
