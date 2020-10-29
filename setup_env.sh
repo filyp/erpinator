@@ -10,5 +10,6 @@ deactivate
 pip install --user pre-commit
 pre-commit install
 
-pip install --user jupyterlab plotly ipywidgets
+pip install --user jupyterlab
+pip install --user plotly ipywidgets
 jupyter labextension install jupyterlab-plotly @jupyter-widgets/jupyterlab-manager plotlywidget
