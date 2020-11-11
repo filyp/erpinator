@@ -7,10 +7,13 @@ repos:
     - id: check-added-large-files
     - id: check-merge-conflict
     - id: check-yaml
+    - id: requirements-txt-fixer
+
 - repo: https://github.com/kynan/nbstripout
   rev: master
   hooks:
     - id: nbstripout
+
 - repo: https://github.com/nbQA-dev/nbQA
   rev: 0.3.5
   hooks:
@@ -21,3 +24,20 @@ repos:
     # - id: nbqa-isort
     #   args: [--nbqa-mutate]
     # - id: nbqa-flake8
+
+- repo: https://github.com/asottile/pyupgrade
+  rev: v2.7.2
+  hooks:
+    - id: pyupgrade
+      args: [--py36-plus]
+
+- repo: https://github.com/ambv/black
+  rev: stable
+  hooks:
+    - id: black
+      language_version: python3
+
+# - repo: https://github.com/pre-commit/mirrors-isort
+#   rev: 'v5.6.4'
+#   hooks:
+#     - id: isort
