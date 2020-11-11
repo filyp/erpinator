@@ -4,10 +4,9 @@ repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v2.4.0
   hooks:
-    - id: trailing-whitespace
-    - id: check-yaml
     - id: check-added-large-files
     - id: check-merge-conflict
+    - id: check-yaml
 - repo: https://github.com/kynan/nbstripout
   rev: master
   hooks:
@@ -15,10 +14,10 @@ repos:
 - repo: https://github.com/nbQA-dev/nbQA
   rev: 0.3.5
   hooks:
-    - id: nbqa-isort
-      args: [--nbqa-mutate]
     - id: nbqa-pyupgrade
       args: [--nbqa-mutate]
-    - id: nbqa-flake8
-    # - id: nbqa-black
+    - id: nbqa-black
+      args: [--nbqa-mutate]
+    # - id: nbqa-isort
     #   args: [--nbqa-mutate]
+    # - id: nbqa-flake8
