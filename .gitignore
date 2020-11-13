@@ -2,4 +2,5 @@ venv
 data
 .ipynb_checkpoints
 .vscode/settings.json
+__pycache__
 *.pyc
