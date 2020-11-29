@@ -1,10 +1,11 @@
 import mne
 import numpy as np
+import pywt
 from scipy import signal
 from scipy.interpolate import interp1d
 
 # Start and end of the segments
-tmin, tmax = -0.1, 0.6
+tmin, tmax = -0.1, 0.8
 
 base_layout = dict(
     template="plotly_dark",
@@ -25,24 +26,24 @@ base_layout = dict(
 #     # return np.dot(diff, diff) * 1e12
 
 
-def mask(array, window):
-    mapping = interp1d([tmin, tmax], [0, len(array)])
-    min_index, max_index = mapping(window)
-    return np.array(
-        [el if min_index < i < max_index else 0 for i, el in enumerate(array)]
-    )
+# def mask(array, window):
+#     mapping = interp1d([tmin, tmax], [0, len(array)])
+#     min_index, max_index = mapping(window)
+#     return np.array(
+#         [el if min_index < i < max_index else 0 for i, el in enumerate(array)]
+#     )
 
 
-def band_pass(array, freq_range, sampling_freq):
-    sos = signal.butter(6, freq_range, "bandpass", fs=sampling_freq, output="sos")
-    return signal.sosfiltfilt(sos, array)
+# def band_pass(array, freq_range, sampling_freq):
+#     sos = signal.butter(6, freq_range, "bandpass", fs=sampling_freq, output="sos")
+#     return signal.sosfiltfilt(sos, array)
 
 
-def extract_erp(epoch, selected_chs, band_pass_range, sampling_freq, window):
-    filtered = epoch[selected_chs].mean(axis=0)
-    filtered = band_pass(filtered, band_pass_range, sampling_freq)
-    filtered = mask(filtered, window)
-    return filtered
+# def extract_erp(epoch, selected_chs, band_pass_range, sampling_freq, window):
+#     filtered = epoch[selected_chs].mean(axis=0)
+#     filtered = band_pass(filtered, band_pass_range, sampling_freq)
+#     filtered = mask(filtered, window)
+#     return filtered
 
 
 def load_gonogo_responses():
@@ -99,3 +100,23 @@ def load_gonogo_responses():
     )
 
     return epochs
+
+
+def get_wavelet(latency, frequency, times):
+    signal_frequency = 1 / (times[1] - times[0])
+    mother = pywt.ContinuousWavelet("mexh")
+    scale = signal_frequency / frequency
+    mex, _ = mother.wavefun(length=int(scale * 4))
+
+    center_index = int((latency - times[0]) * signal_frequency)
+    left_index = center_index - len(mex) // 2
+    res = np.zeros_like(times)
+    if left_index < 0:
+        mex = mex[-left_index:]
+        start = 0
+    else:
+        start = left_index
+
+    mex = mex[: len(res) - start]
+    res[start : start + len(mex)] = mex
+    return res

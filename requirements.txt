@@ -17,6 +17,7 @@ cycler==0.10.0
 decorator==4.4.2
 defusedxml==0.6.0
 entrypoints==0.3
+flake8==3.8.4
 gast==0.3.3
 google-auth==1.23.0
 google-auth-oauthlib==0.4.2
@@ -30,6 +31,7 @@ ipython-genutils==0.2.0
 ipywidgets==7.5.1
 jedi==0.17.2
 Jinja2==2.11.2
+joblib==0.17.0
 jsonschema==3.2.0
 jupyter-client==6.1.7
 jupyter-core==4.6.3
@@ -39,6 +41,7 @@ kiwisolver==1.3.1
 Markdown==3.3.3
 MarkupSafe==1.1.1
 matplotlib==3.3.2
+mccabe==0.6.1
 mistune==0.8.4
 mne==0.21.0
 mypy-extensions==0.4.3
@@ -52,6 +55,7 @@ numpy==1.18.5
 oauthlib==3.1.0
 opt-einsum==3.3.0
 packaging==20.4
+pandas==1.1.4
 pandocfilters==1.4.3
 parso==0.7.1
 pathspec==0.8.1
@@ -66,11 +70,14 @@ protobuf==3.13.0
 ptyprocess==0.6.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
+pycodestyle==2.6.0
 pycparser==2.20
+pyflakes==2.2.0
 Pygments==2.7.2
 pyparsing==2.4.7
 pyrsistent==0.17.3
 python-dateutil==2.8.1
+pytz==2020.4
 PyWavelets==1.1.1
 pyzmq==19.0.2
 regex==2020.10.28
@@ -78,6 +85,7 @@ requests==2.24.0
 requests-oauthlib==1.3.0
 retrying==1.3.3
 rsa==4.6
+scikit-learn==0.23.2
 scipy==1.5.3
 Send2Trash==1.5.0
 six==1.15.0
@@ -88,6 +96,7 @@ tensorflow-estimator==2.3.0
 termcolor==1.1.0
 terminado==0.9.1
 testpath==0.4.4
+threadpoolctl==2.1.0
 toml==0.10.2
 tornado==6.0.4
 traitlets==5.0.5
