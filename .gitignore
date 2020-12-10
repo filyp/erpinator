@@ -4,3 +4,4 @@ data
 .vscode/settings.json
 __pycache__
 *.pyc
+materials

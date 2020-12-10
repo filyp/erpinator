@@ -17,7 +17,7 @@ base_layout = dict(
     dragmode="select",
     showlegend=False,
     width=900,
-    height=400,
+    height=560,
 )
 
 
@@ -114,6 +114,8 @@ def load_all_epochs(test_participants=False, test_epochs=False):
     On default, loads a train set: chooses only 80% of participants
     and for each of them chooses 80% of epochs.
     It will choose them deterministically.
+
+    Participants with less than 10 epochs per condition are rejected.
 
     If test_participants is set to True, it will load remaining 20% of participants.
     If test_epochs is set to True, it will load remaining 20% of epochs.
