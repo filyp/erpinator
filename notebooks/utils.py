@@ -13,7 +13,7 @@ base_layout = dict(
     template="plotly_dark",
     xaxis_showgrid=False,
     yaxis_showgrid=False,
-    margin=dict(l=20, r=20, t=20, b=20),
+    margin=dict(l=30, r=30, t=30, b=30),
     dragmode="select",
     showlegend=False,
     width=900,
@@ -161,24 +161,9 @@ def load_all_epochs(test_participants=False, test_epochs=False):
 #     # return np.dot(diff, diff) * 1e12
 
 
-# def mask(array, window):
-#     mapping = interp1d([tmin, tmax], [0, len(array)])
-#     min_index, max_index = mapping(window)
-#     return np.array(
-#         [el if min_index < i < max_index else 0 for i, el in enumerate(array)]
-#     )
-
-
 # def band_pass(array, freq_range, sampling_freq):
 #     sos = signal.butter(6, freq_range, "bandpass", fs=sampling_freq, output="sos")
 #     return signal.sosfiltfilt(sos, array)
-
-
-# def extract_erp(epoch, selected_chs, band_pass_range, sampling_freq, window):
-#     filtered = epoch[selected_chs].mean(axis=0)
-#     filtered = band_pass(filtered, band_pass_range, sampling_freq)
-#     filtered = mask(filtered, window)
-#     return filtered
 
 
 # def load_gonogo_responses():
