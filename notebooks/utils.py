@@ -8,6 +8,9 @@ from sklearn.model_selection import train_test_split
 
 # Start and end of the segments
 tmin, tmax = -0.1, 0.6
+signal_frequency = 256
+ERROR = 0
+CORRECT = 1
 
 base_layout = dict(
     template="plotly_dark",
@@ -19,6 +22,53 @@ base_layout = dict(
     width=900,
     height=560,
 )
+
+
+def get_frequencies(density=2):
+    return 2 ** (np.arange(7, step=1 / density))
+
+
+def cwt(epoch, mwt="mexh", density=2):
+    # TODO cahce it using cachier and xxhash
+    center_wavelet_frequency = pywt.scale2frequency(mwt, [1])[0]
+    const = center_wavelet_frequency * signal_frequency
+
+    # construct scales
+    scales = const / get_frequencies(density)
+
+    # compute coeffs
+    coef, freqs = pywt.cwt(
+        data=epoch, scales=scales, wavelet=mwt, sampling_period=1 / signal_frequency
+    )
+    if "cmor" in mwt:
+        # if complex Morlet, change to real
+        coef = np.abs(coef)
+    return coef
+
+
+def get_separations(cond1, cond2):
+    # compute separation across given parameters
+    # TODO think if within_class equation is OK or should conditions be rescaled
+    # fmt: off
+    within_class_scatter = cond1.var(axis=0) * len(cond1) + \
+                           cond2.var(axis=0) * len(cond2)
+    # fmt: on
+    joined = np.append(cond1, cond2, axis=0)
+    between_class_scatter = joined.var(axis=0) * len(joined)
+    return between_class_scatter / within_class_scatter
+
+
+def filter_(data, spatial_filter):
+    return np.tensordot(data, spatial_filter, axes=([1], [0]))
+
+
+def get_best_separation(cond1, cond2, spatial_filter):
+    cond1_filtered = filter_(cond1, spatial_filter)
+    cond2_filtered = filter_(cond2, spatial_filter)
+    separations = get_separations(cond1_filtered, cond2_filtered)
+
+    best_index = np.unravel_index(separations.argmax(), separations.shape)
+    return best_index, separations
 
 
 def get_wavelet(latency, frequency, times):
