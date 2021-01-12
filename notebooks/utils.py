@@ -35,7 +35,6 @@ def get_frequencies(density=2):
 
 
 def cwt(epoch, mwt="mexh", density=2):
-    # TODO cahce it using cachier and xxhash
     center_wavelet_frequency = pywt.scale2frequency(mwt, [1])[0]
     const = center_wavelet_frequency * signal_frequency
 
@@ -50,6 +49,26 @@ def cwt(epoch, mwt="mexh", density=2):
         # if complex Morlet, change to real
         coef = np.abs(coef)
     return coef
+
+
+# def _cwt_args_hasher(args, kwargs):
+#     # caching speeds up cwt_multiple from 200ms to 500us (~400x)
+#     bound = inspect.signature(cwt_multiple).bind(*args, **kwargs)
+#     bound.apply_defaults()
+#     signals = bound.arguments["signals"]
+#     mwt = bound.arguments["mwt"]
+#     density = bound.arguments["density"]
+#     h1 = hash(signals.tobytes())
+#     h2 = hash(mwt)
+#     h3 = hash(density)
+#     return hash(h1 + h2 + h3)
+
+
+# @cachier(pickle_reload=False, hash_params=_cwt_args_hasher)
+# def cwt_multiple(signals, mwt="mexh", density=2):
+#     # it's a helper function, so that cache is accesed less frequently
+#     # it's necessary because writing to cache after every new cwt is extremely slow
+#     return [cwt(signal, mwt, density) for signal in signals]
 
 
 def get_separations(cond1, cond2):
@@ -68,6 +87,7 @@ def filter_(data, spatial_filter):
     return np.tensordot(data, spatial_filter, axes=([1], [0]))
 
 
+# deprecated
 def get_best_separation(cond1, cond2, spatial_filter):
     cond1_filtered = filter_(cond1, spatial_filter)
     cond2_filtered = filter_(cond2, spatial_filter)
