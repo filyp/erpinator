@@ -1,24 +1,100 @@
+import re
+import glob
+import os
+import os.path as op
+from collections import defaultdict
+
 import mne
 import numpy as np
 import pywt
-import glob
 from scipy import signal
 from scipy.interpolate import interp1d
 from sklearn.model_selection import train_test_split
 
+
 # Start and end of the segments
 tmin, tmax = -0.1, 0.6
+signal_frequency = 256
+ERROR = 0
+CORRECT = 1
 
 base_layout = dict(
     template="plotly_dark",
     xaxis_showgrid=False,
     yaxis_showgrid=False,
-    margin=dict(l=20, r=20, t=20, b=20),
+    margin=dict(l=30, r=30, t=30, b=30),
     dragmode="select",
     showlegend=False,
     width=900,
     height=560,
 )
+
+
+def get_frequencies(density=2):
+    return 2 ** (np.arange(7, step=1 / density))
+
+
+def cwt(epoch, mwt="mexh", density=2):
+    center_wavelet_frequency = pywt.scale2frequency(mwt, [1])[0]
+    const = center_wavelet_frequency * signal_frequency
+
+    # construct scales
+    scales = const / get_frequencies(density)
+
+    # compute coeffs
+    coef, freqs = pywt.cwt(
+        data=epoch, scales=scales, wavelet=mwt, sampling_period=1 / signal_frequency
+    )
+    if "cmor" in mwt:
+        # if complex Morlet, change to real
+        coef = np.abs(coef)
+    return coef
+
+
+# def _cwt_args_hasher(args, kwargs):
+#     # caching speeds up cwt_multiple from 200ms to 500us (~400x)
+#     bound = inspect.signature(cwt_multiple).bind(*args, **kwargs)
+#     bound.apply_defaults()
+#     signals = bound.arguments["signals"]
+#     mwt = bound.arguments["mwt"]
+#     density = bound.arguments["density"]
+#     h1 = hash(signals.tobytes())
+#     h2 = hash(mwt)
+#     h3 = hash(density)
+#     return hash(h1 + h2 + h3)
+
+
+# @cachier(pickle_reload=False, hash_params=_cwt_args_hasher)
+# def cwt_multiple(signals, mwt="mexh", density=2):
+#     # it's a helper function, so that cache is accesed less frequently
+#     # it's necessary because writing to cache after every new cwt is extremely slow
+#     return [cwt(signal, mwt, density) for signal in signals]
+
+
+def get_separations(cond1, cond2):
+    # compute separation across given parameters
+    # TODO think if within_class equation is OK or should conditions be rescaled
+    # fmt: off
+    within_class_scatter = cond1.var(axis=0) * len(cond1) + \
+                           cond2.var(axis=0) * len(cond2)
+    # fmt: on
+    joined = np.append(cond1, cond2, axis=0)
+    between_class_scatter = joined.var(axis=0) * len(joined)
+    return between_class_scatter / within_class_scatter
+
+
+def filter_(data, spatial_filter):
+    return np.tensordot(data, spatial_filter, axes=([1], [0]))
+
+
+# deprecated
+def get_best_separation(cond1, cond2, spatial_filter):
+    cond1_filtered = filter_(cond1, spatial_filter)
+    cond2_filtered = filter_(cond2, spatial_filter)
+    separations = get_separations(cond1_filtered, cond2_filtered)
+
+    best_index = np.unravel_index(separations.argmax(), separations.shape)
+    return best_index, separations
 
 
 def get_wavelet(latency, frequency, times):
@@ -343,9 +419,6 @@ def get_bads_by_annotation(
     return bads
 
 
-from collections import defaultdict
-
-
 def get_epoch_channels_dict(bads):
     """Create default dictionary from array of tuples
 
@@ -395,11 +468,6 @@ def reject_with_mask(epochs, mask, bads):
     epochs.drop(indices=epoch_drop_indices)
 
     return epochs
-
-
-import re
-import os
-import os.path as op
 
 
 def _read_vmrk(fname):
