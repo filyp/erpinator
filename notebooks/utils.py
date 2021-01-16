@@ -7,6 +7,7 @@ from collections import defaultdict
 import mne
 import numpy as np
 import pywt
+import pandas as pd
 from scipy import signal
 from scipy.interpolate import interp1d
 from sklearn.model_selection import train_test_split
@@ -223,6 +224,113 @@ def load_epochs_from_file(file, reject_bad_segments="auto", mask=None):
     return epochs
 
 
+def create_df_data(
+    create_test_participants=True,
+    create_test_epochs=True,
+    info_filename=None,
+    info=["Rumination Full Scale"],
+):
+    """Loads data for all participants and create DataFrame with optional additional info from given .csv file.
+
+    Parameters
+    ----------
+    create_test_participants: bool
+        if 20% data will be cut for testing.
+    create_test_epochs: bool
+        if 20% epochs of each participants will be cut for testing.
+    info_filename: String | None
+        path to .csv file with additional data.
+    info: array
+        listed parameters from the info file to be loaded.
+
+
+    Returns
+    -------
+    go_nogo_data_df : pandas.DataFrame
+
+    """
+    header_files = glob.glob("../data/responses/*.vhdr")
+    header_files = sorted(header_files)
+    go_nogo_data_df = pd.DataFrame()
+
+    if create_test_participants:
+        h_train, h_test = train_test_split(header_files, test_size=0.2, random_state=0)
+        header_files = h_train
+
+    for file in header_files:
+        participant_epochs = load_epochs_from_file(file)
+        participant_id = re.match(r".*_(\w+).*", file).group(1)
+
+        error = participant_epochs["error_response"]._data
+        correct = participant_epochs["correct_response"]._data
+
+        if len(error) < 10 or len(correct) < 10:
+            # not enough data for this participant
+            continue
+
+        if create_test_epochs:
+            # shuffling is disabled to make sure test epochs are after train epochs
+            err_train, err_test = train_test_split(error, test_size=0.2, shuffle=False)
+            cor_train, cor_test = train_test_split(
+                correct, test_size=0.2, shuffle=False
+            )
+
+            error = err_train
+            correct = cor_train
+
+        participant_df = create_df_from_epochs(
+            participant_id, correct, error, info_filename, info
+        )
+        go_nogo_data_df = go_nogo_data_df.append(participant_df, ignore_index=True)
+
+    return go_nogo_data_df
+
+
+def create_df_from_epochs(id, correct, error, info_filename, info):
+    """Create df for each participant. DF structure is like: {epoch: epoch_data ; marker: correct|error}
+    Default info extracted form .csv file is 'Rumination Full Scale' and participants' ids.
+    With this info df structure is like: {epoch: epoch_data ; marker: correct|error ; File: id ; 'Rumination Full Scale': int}
+
+    Parameters
+    ----------
+    id: String
+        participant's id extracted from filename
+    correct: array
+        correct responses' data
+    error: array
+        error responses' data
+    info_filename: String
+        path to .csv file with additional data.
+    info: array
+        listed parameters from the info file to be loaded.
+
+    Returns
+    -------
+    participant_df : pandas.DataFrame
+
+    """
+    participant_df = pd.DataFrame()
+    info_df = pd.DataFrame()
+
+    if info_filename is not None:
+        rumination_df = pd.read_csv(info_filename, usecols=["File"] + info)
+        info_df = (
+            rumination_df.loc[rumination_df["File"] == id]
+            .reset_index()
+            .drop("index", axis=1)
+        )
+
+    for epoch in correct:
+        epoch_df = pd.DataFrame({"epoch": [epoch], "marker": "correct"}).join(info_df)
+        participant_df = participant_df.append(epoch_df, ignore_index=True)
+
+    for epoch in error:
+        epoch_df = pd.DataFrame({"epoch": [epoch], "marker": "error"}).join(info_df)
+        participant_df = participant_df.append(epoch_df, ignore_index=True)
+
+    return participant_df
+
+
 def load_all_epochs(test_participants=False, test_epochs=False):
     """Loads epochs for all participants.
 
@@ -262,7 +370,7 @@ def load_all_epochs(test_participants=False, test_epochs=False):
         err_train, err_test = train_test_split(error, test_size=0.2, shuffle=False)
         cor_train, cor_test = train_test_split(correct, test_size=0.2, shuffle=False)
         if test_epochs:
-            all_epochs.append((err_test, cor_test))
+            all_epochs.append((err_test, err_test))
         else:
             all_epochs.append((err_train, cor_train))
 
