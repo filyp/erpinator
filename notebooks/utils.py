@@ -1,6 +1,7 @@
 import re
 import glob
 import os
+import ast
 import os.path as op
 from collections import defaultdict
 
@@ -116,6 +117,11 @@ def get_wavelet(latency, frequency, times):
     mex = mex[: len(res) - start]
     res[start : start + len(mex)] = mex
     return res
+
+
+def from_np_array(array_string):
+    array_string = ",".join(array_string.replace("[ ", "[").split())
+    return np.array(ast.literal_eval(array_string))
 
 
 def load_epochs_from_file(file, reject_bad_segments="auto", mask=None):
@@ -253,21 +259,28 @@ def create_df_data(
     header_files = sorted(header_files)
     go_nogo_data_df = pd.DataFrame()
 
+    # cut 20% of data for testing
     if create_test_participants:
         h_train, h_test = train_test_split(header_files, test_size=0.2, random_state=0)
         header_files = h_train
 
     for file in header_files:
+        #  load eeg data for given participant
         participant_epochs = load_epochs_from_file(file)
+
+        # and compute participant's id from file_name
         participant_id = re.match(r".*_(\w+).*", file).group(1)
 
         error = participant_epochs["error_response"]._data
         correct = participant_epochs["correct_response"]._data
 
+        # exclude those participants who have too few samples
         if len(error) < 10 or len(correct) < 10:
             # not enough data for this participant
             continue
 
+        # cut 20% of each participant's epochs for testing
+        # TODO: not sure if this step is necessary
         if create_test_epochs:
             # shuffling is disabled to make sure test epochs are after train epochs
             err_train, err_test = train_test_split(error, test_size=0.2, shuffle=False)
@@ -278,9 +291,11 @@ def create_df_data(
             error = err_train
             correct = cor_train
 
+        # construct dataframe for participant with: id|epoch_data|response_type|additional info...
         participant_df = create_df_from_epochs(
             participant_id, correct, error, info_filename, info
         )
+        print(participant_id)
         go_nogo_data_df = go_nogo_data_df.append(participant_df, ignore_index=True)
 
     return go_nogo_data_df
@@ -312,6 +327,7 @@ def create_df_from_epochs(id, correct, error, info_filename, info):
     participant_df = pd.DataFrame()
     info_df = pd.DataFrame()
 
+    # get additional info from file
     if info_filename is not None:
         rumination_df = pd.read_csv(info_filename, usecols=["File"] + info)
         info_df = (
@@ -321,11 +337,15 @@ def create_df_from_epochs(id, correct, error, info_filename, info):
         )
 
     for epoch in correct:
-        epoch_df = pd.DataFrame({"epoch": [epoch], "marker": "correct"}).join(info_df)
+        epoch_df = pd.DataFrame({"id": [id], "epoch": [epoch], "marker": [1.0]}).join(
+            info_df
+        )
         participant_df = participant_df.append(epoch_df, ignore_index=True)
 
     for epoch in error:
-        epoch_df = pd.DataFrame({"epoch": [epoch], "marker": "error"}).join(info_df)
+        epoch_df = pd.DataFrame({"id": [id], "epoch": [epoch], "marker": [0.0]}).join(
+            info_df
+        )
         participant_df = participant_df.append(epoch_df, ignore_index=True)
 
     return participant_df
