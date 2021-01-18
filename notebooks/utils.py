@@ -231,8 +231,8 @@ def load_epochs_from_file(file, reject_bad_segments="auto", mask=None):
 
 
 def create_df_data(
-    create_test_participants=True,
-    create_test_epochs=True,
+    test_participants=False,
+    test_epochs=False,
     info_filename=None,
     info=["Rumination Full Scale"],
 ):
@@ -240,10 +240,12 @@ def create_df_data(
 
     Parameters
     ----------
-    create_test_participants: bool
-        if 20% data will be cut for testing.
-    create_test_epochs: bool
-        if 20% epochs of each participants will be cut for testing.
+    test_participants: bool
+        whether load data for training or final tresting.
+        If true load participants data for testing.
+    test_epochs: bool
+        whether load data for training or final testing.
+        If true load epochs of each participants data for testing.
     info_filename: String | None
         path to .csv file with additional data.
     info: array
@@ -260,8 +262,11 @@ def create_df_data(
     go_nogo_data_df = pd.DataFrame()
 
     # cut 20% of data for testing
-    if create_test_participants:
-        h_train, h_test = train_test_split(header_files, test_size=0.2, random_state=0)
+    h_train, h_test = train_test_split(header_files, test_size=0.2, random_state=0)
+
+    if test_participants:
+        header_files = h_test
+    else:
         header_files = h_train
 
     for file in header_files:
@@ -280,14 +285,14 @@ def create_df_data(
             continue
 
         # cut 20% of each participant's epochs for testing
+        # shuffling is disabled to make sure test epochs are after train epochs
         # TODO: not sure if this step is necessary
-        if create_test_epochs:
-            # shuffling is disabled to make sure test epochs are after train epochs
-            err_train, err_test = train_test_split(error, test_size=0.2, shuffle=False)
-            cor_train, cor_test = train_test_split(
-                correct, test_size=0.2, shuffle=False
-            )
-
+        err_train, err_test = train_test_split(error, test_size=0.2, shuffle=False)
+        cor_train, cor_test = train_test_split(correct, test_size=0.2, shuffle=False)
+        if test_epochs:
+            error = err_test
+            correct = cor_test
+        else:
             error = err_train
             correct = cor_train
 
@@ -302,9 +307,11 @@ def create_df_data(
 
 
 def create_df_from_epochs(id, correct, error, info_filename, info):
-    """Create df for each participant. DF structure is like: {epoch: epoch_data ; marker: correct|error}
+    """Create df for each participant. DF structure is like: {id: String ; epoch: epoch_data ; marker: 1.0|0.0}
+    1.0 means correct and 0.0 means error response.
     Default info extracted form .csv file is 'Rumination Full Scale' and participants' ids.
-    With this info df structure is like: {epoch: epoch_data ; marker: correct|error ; File: id ; 'Rumination Full Scale': int}
+    With this info df structure is like:
+    {id: String ; epoch: epoch_data ; marker: 1.0|0.0 ; File: id ; 'Rumination Full Scale': int}
 
     Parameters
     ----------
@@ -390,7 +397,7 @@ def load_all_epochs(test_participants=False, test_epochs=False):
         err_train, err_test = train_test_split(error, test_size=0.2, shuffle=False)
         cor_train, cor_test = train_test_split(correct, test_size=0.2, shuffle=False)
         if test_epochs:
-            all_epochs.append((err_test, err_test))
+            all_epochs.append((err_test, cor_test))
         else:
             all_epochs.append((err_train, cor_train))
 
