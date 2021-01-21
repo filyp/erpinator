@@ -344,13 +344,13 @@ def create_df_from_epochs(id, correct, error, info_filename, info):
         )
 
     for epoch in correct:
-        epoch_df = pd.DataFrame({"id": [id], "epoch": [epoch], "marker": [1.0]}).join(
-            info_df
-        )
+        epoch_df = pd.DataFrame(
+            {"id": [id], "epoch": [epoch], "marker": [CORRECT]}
+        ).join(info_df)
         participant_df = participant_df.append(epoch_df, ignore_index=True)
 
     for epoch in error:
-        epoch_df = pd.DataFrame({"id": [id], "epoch": [epoch], "marker": [0.0]}).join(
+        epoch_df = pd.DataFrame({"id": [id], "epoch": [epoch], "marker": [ERROR]}).join(
             info_df
         )
         participant_df = participant_df.append(epoch_df, ignore_index=True)
