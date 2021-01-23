@@ -1,12 +1,14 @@
 import re
 import glob
 import os
+import ast
 import os.path as op
 from collections import defaultdict
 
 import mne
 import numpy as np
 import pywt
+import pandas as pd
 from scipy import signal
 from scipy.interpolate import interp1d
 from sklearn.model_selection import train_test_split
@@ -117,6 +119,11 @@ def get_wavelet(latency, frequency, times):
     return res
 
 
+def from_np_array(array_string):
+    array_string = ",".join(array_string.replace("[ ", "[").split())
+    return np.array(ast.literal_eval(array_string))
+
+
 def load_epochs_from_file(file, reject_bad_segments="auto", mask=None):
     """Load epochs from a header file.
 
@@ -221,6 +228,134 @@ def load_epochs_from_file(file, reject_bad_segments="auto", mask=None):
         )
 
     return epochs
+
+
+def create_df_data(
+    test_participants=False,
+    test_epochs=False,
+    info_filename=None,
+    info=["Rumination Full Scale"],
+):
+    """Loads data for all participants and create DataFrame with optional additional info from given .csv file.
+
+    Parameters
+    ----------
+    test_participants: bool
+        whether load data for training or final tresting.
+        If true load participants data for testing.
+    test_epochs: bool
+        whether load data for training or final testing.
+        If true load epochs of each participants data for testing.
+    info_filename: String | None
+        path to .csv file with additional data.
+    info: array
+        listed parameters from the info file to be loaded.
+
+
+    Returns
+    -------
+    go_nogo_data_df : pandas.DataFrame
+
+    """
+    header_files = glob.glob("../data/responses/*.vhdr")
+    header_files = sorted(header_files)
+    go_nogo_data_df = pd.DataFrame()
+
+    # cut 20% of data for testing
+    h_train, h_test = train_test_split(header_files, test_size=0.2, random_state=0)
+
+    if test_participants:
+        header_files = h_test
+    else:
+        header_files = h_train
+
+    for file in header_files:
+        #  load eeg data for given participant
+        participant_epochs = load_epochs_from_file(file)
+
+        # and compute participant's id from file_name
+        participant_id = re.match(r".*_(\w+).*", file).group(1)
+
+        error = participant_epochs["error_response"]._data
+        correct = participant_epochs["correct_response"]._data
+
+        # exclude those participants who have too few samples
+        if len(error) < 10 or len(correct) < 10:
+            # not enough data for this participant
+            continue
+
+        # cut 20% of each participant's epochs for testing
+        # shuffling is disabled to make sure test epochs are after train epochs
+        # TODO: not sure if this step is necessary
+        err_train, err_test = train_test_split(error, test_size=0.2, shuffle=False)
+        cor_train, cor_test = train_test_split(correct, test_size=0.2, shuffle=False)
+        if test_epochs:
+            error = err_test
+            correct = cor_test
+        else:
+            error = err_train
+            correct = cor_train
+
+        # construct dataframe for participant with: id|epoch_data|response_type|additional info...
+        participant_df = create_df_from_epochs(
+            participant_id, correct, error, info_filename, info
+        )
+        print(participant_id)
+        go_nogo_data_df = go_nogo_data_df.append(participant_df, ignore_index=True)
+
+    return go_nogo_data_df
+
+
+def create_df_from_epochs(id, correct, error, info_filename, info):
+    """Create df for each participant. DF structure is like: {id: String ; epoch: epoch_data ; marker: 1.0|0.0}
+    1.0 means correct and 0.0 means error response.
+    Default info extracted form .csv file is 'Rumination Full Scale' and participants' ids.
+    With this info df structure is like:
+    {id: String ; epoch: epoch_data ; marker: 1.0|0.0 ; File: id ; 'Rumination Full Scale': int}
+
+    Parameters
+    ----------
+    id: String
+        participant's id extracted from filename
+    correct: array
+        correct responses' data
+    error: array
+        error responses' data
+    info_filename: String
+        path to .csv file with additional data.
+    info: array
+        listed parameters from the info file to be loaded.
+
+    Returns
+    -------
+    participant_df : pandas.DataFrame
+
+    """
+    participant_df = pd.DataFrame()
+    info_df = pd.DataFrame()
+
+    # get additional info from file
+    if info_filename is not None:
+        rumination_df = pd.read_csv(info_filename, usecols=["File"] + info)
+        info_df = (
+            rumination_df.loc[rumination_df["File"] == id]
+            .reset_index()
+            .drop("index", axis=1)
+        )
+
+    for epoch in correct:
+        epoch_df = pd.DataFrame(
+            {"id": [id], "epoch": [epoch], "marker": [CORRECT]}
+        ).join(info_df)
+        participant_df = participant_df.append(epoch_df, ignore_index=True)
+
+    for epoch in error:
+        epoch_df = pd.DataFrame({"id": [id], "epoch": [epoch], "marker": [ERROR]}).join(
+            info_df
+        )
+        participant_df = participant_df.append(epoch_df, ignore_index=True)
+
+    return participant_df
 
 
 def load_all_epochs(test_participants=False, test_epochs=False):
