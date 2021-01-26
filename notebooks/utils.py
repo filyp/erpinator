@@ -85,14 +85,10 @@ def get_separations(cond1, cond2):
     return between_class_scatter / within_class_scatter
 
 
-def filter_(data, spatial_filter):
-    return np.tensordot(data, spatial_filter, axes=([1], [0]))
-
-
-# deprecated
+# TODO delete
 def get_best_separation(cond1, cond2, spatial_filter):
-    cond1_filtered = filter_(cond1, spatial_filter)
-    cond2_filtered = filter_(cond2, spatial_filter)
+    cond1_filtered = np.tensordot(cond1, spatial_filter, axes=([1], [0]))
+    cond2_filtered = np.tensordot(cond2, spatial_filter, axes=([1], [0]))
     separations = get_separations(cond1_filtered, cond2_filtered)
 
     best_index = np.unravel_index(separations.argmax(), separations.shape)
@@ -238,10 +234,21 @@ def create_df_data(
 ):
     """Loads data for all participants and create DataFrame with optional additional info from given .csv file.
 
+    On default, loads a train set: chooses only 80% of participants
+    and for each of them chooses 80% of epochs.
+    It will choose them deterministically.
+
+    Participants with less than 10 epochs per condition are rejected.
+
+    If test_participants is set to True, it will load remaining 20% of participants.
+    If test_epochs is set to True, it will load remaining 20% of epochs.
+    Test epochs are chronologically after train epochs,
+    because it reflects real usage (first callibration and then classification).
+
     Parameters
     ----------
     test_participants: bool
-        whether load data for training or final tresting.
+        whether load data for training or final testing.
         If true load participants data for testing.
     test_epochs: bool
         whether load data for training or final testing.
@@ -358,6 +365,7 @@ def create_df_from_epochs(id, correct, error, info_filename, info):
     return participant_df
 
 
+# TODO delete from explore_data
 def load_all_epochs(test_participants=False, test_epochs=False):
     """Loads epochs for all participants.
 
