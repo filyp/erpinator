@@ -53,26 +53,6 @@ def cwt(epoch, mwt="mexh", density=2):
     return coef
 
 
-# def _cwt_args_hasher(args, kwargs):
-#     # caching speeds up cwt_multiple from 200ms to 500us (~400x)
-#     bound = inspect.signature(cwt_multiple).bind(*args, **kwargs)
-#     bound.apply_defaults()
-#     signals = bound.arguments["signals"]
-#     mwt = bound.arguments["mwt"]
-#     density = bound.arguments["density"]
-#     h1 = hash(signals.tobytes())
-#     h2 = hash(mwt)
-#     h3 = hash(density)
-#     return hash(h1 + h2 + h3)
-
-
-# @cachier(pickle_reload=False, hash_params=_cwt_args_hasher)
-# def cwt_multiple(signals, mwt="mexh", density=2):
-#     # it's a helper function, so that cache is accesed less frequently
-#     # it's necessary because writing to cache after every new cwt is extremely slow
-#     return [cwt(signal, mwt, density) for signal in signals]
-
-
 def get_separations(cond1, cond2):
     # compute separation across given parameters
     # TODO think if within_class equation is OK or should conditions be rescaled
@@ -230,7 +210,7 @@ def create_df_data(
     test_participants=False,
     test_epochs=False,
     info_filename=None,
-    info=["Rumination Full Scale"],
+    info=None,
 ):
     """Loads data for all participants and create DataFrame with optional additional info from given .csv file.
 
@@ -257,6 +237,7 @@ def create_df_data(
         path to .csv file with additional data.
     info: array
         listed parameters from the info file to be loaded.
+        if None, load all parameters
 
 
     Returns
@@ -332,6 +313,7 @@ def create_df_from_epochs(id, correct, error, info_filename, info):
         path to .csv file with additional data.
     info: array
         listed parameters from the info file to be loaded.
+        if None, load all parameters
 
     Returns
     -------
@@ -343,7 +325,10 @@ def create_df_from_epochs(id, correct, error, info_filename, info):
 
     # get additional info from file
     if info_filename is not None:
-        rumination_df = pd.read_csv(info_filename, usecols=["File"] + info)
+        if info is not None:
+            rumination_df = pd.read_csv(info_filename, usecols=["File"] + info)
+        else:
+            rumination_df = pd.read_csv(info_filename)
         info_df = (
             rumination_df.loc[rumination_df["File"] == id]
             .reset_index()
