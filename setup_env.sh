@@ -11,5 +11,6 @@ pip install --user pre-commit
 pre-commit install
 
 # for plotly widget support
-pip install --user jupyterlab==1.0.0 plotly ipywidgets
-jupyter labextension install jupyterlab-plotly plotlywidget
+pip install --user jupyterlab plotly==4.14.3 "ipywidgets>=7.5"
+jupyter labextension install jupyterlab-plotly@4.14.3
+jupyter labextension install @jupyter-widgets/jupyterlab-manager plotlywidget@4.14.3
