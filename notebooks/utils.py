@@ -90,7 +90,7 @@ def from_np_array(array_string):
     return np.array(ast.literal_eval(array_string))
 
 
-def load_epochs_from_file(file, reject_bad_segments="auto", mask=None):
+def load_epochs_from_file(file, reject_bad_segments="auto", mask=rone):
     """Load epochs from a header file.
 
     Args:
@@ -200,7 +200,7 @@ def create_df_data(
     test_participants=False,
     test_epochs=False,
     info_filename=None,
-    info=None,
+    info="all",
 ):
     """Loads data for all participants and create DataFrame with optional additional info from given .csv file.
 
@@ -227,7 +227,7 @@ def create_df_data(
         path to .csv file with additional data.
     info: array
         listed parameters from the info file to be loaded.
-        if None, load all parameters
+        if 'all', load all parameters
 
 
     Returns
@@ -303,7 +303,7 @@ def create_df_from_epochs(id, correct, error, info_filename, info):
         path to .csv file with additional data.
     info: array
         listed parameters from the info file to be loaded.
-        if None, load all parameters
+        if 'all', load all parameters
 
     Returns
     -------
@@ -315,10 +315,10 @@ def create_df_from_epochs(id, correct, error, info_filename, info):
 
     # get additional info from file
     if info_filename is not None:
-        if info is not None:
-            rumination_df = pd.read_csv(info_filename, usecols=["File"] + info)
-        else:
+        if info == "all":
             rumination_df = pd.read_csv(info_filename)
+        else:
+            rumination_df = pd.read_csv(info_filename, usecols=["File"] + info)
         info_df = (
             rumination_df.loc[rumination_df["File"] == id]
             .reset_index()
