@@ -53,26 +53,6 @@ def cwt(epoch, mwt="mexh", density=2):
     return coef
 
 
-# def _cwt_args_hasher(args, kwargs):
-#     # caching speeds up cwt_multiple from 200ms to 500us (~400x)
-#     bound = inspect.signature(cwt_multiple).bind(*args, **kwargs)
-#     bound.apply_defaults()
-#     signals = bound.arguments["signals"]
-#     mwt = bound.arguments["mwt"]
-#     density = bound.arguments["density"]
-#     h1 = hash(signals.tobytes())
-#     h2 = hash(mwt)
-#     h3 = hash(density)
-#     return hash(h1 + h2 + h3)
-
-
-# @cachier(pickle_reload=False, hash_params=_cwt_args_hasher)
-# def cwt_multiple(signals, mwt="mexh", density=2):
-#     # it's a helper function, so that cache is accesed less frequently
-#     # it's necessary because writing to cache after every new cwt is extremely slow
-#     return [cwt(signal, mwt, density) for signal in signals]
-
-
 def get_separations(cond1, cond2):
     # compute separation across given parameters
     # TODO think if within_class equation is OK or should conditions be rescaled
@@ -83,16 +63,6 @@ def get_separations(cond1, cond2):
     joined = np.append(cond1, cond2, axis=0)
     between_class_scatter = joined.var(axis=0) * len(joined)
     return between_class_scatter / within_class_scatter
-
-
-# TODO delete
-def get_best_separation(cond1, cond2, spatial_filter):
-    cond1_filtered = np.tensordot(cond1, spatial_filter, axes=([1], [0]))
-    cond2_filtered = np.tensordot(cond2, spatial_filter, axes=([1], [0]))
-    separations = get_separations(cond1_filtered, cond2_filtered)
-
-    best_index = np.unravel_index(separations.argmax(), separations.shape)
-    return best_index, separations
 
 
 def get_wavelet(latency, frequency, times):
@@ -120,7 +90,7 @@ def from_np_array(array_string):
     return np.array(ast.literal_eval(array_string))
 
 
-def load_epochs_from_file(file, reject_bad_segments="auto", mask=None):
+def load_epochs_from_file(file, reject_bad_segments="auto", mask=rone):
     """Load epochs from a header file.
 
     Args:
@@ -230,7 +200,7 @@ def create_df_data(
     test_participants=False,
     test_epochs=False,
     info_filename=None,
-    info=["Rumination Full Scale"],
+    info="all",
 ):
     """Loads data for all participants and create DataFrame with optional additional info from given .csv file.
 
@@ -257,6 +227,7 @@ def create_df_data(
         path to .csv file with additional data.
     info: array
         listed parameters from the info file to be loaded.
+        if 'all', load all parameters
 
 
     Returns
@@ -332,6 +303,7 @@ def create_df_from_epochs(id, correct, error, info_filename, info):
         path to .csv file with additional data.
     info: array
         listed parameters from the info file to be loaded.
+        if 'all', load all parameters
 
     Returns
     -------
@@ -343,7 +315,10 @@ def create_df_from_epochs(id, correct, error, info_filename, info):
 
     # get additional info from file
     if info_filename is not None:
-        rumination_df = pd.read_csv(info_filename, usecols=["File"] + info)
+        if info == "all":
+            rumination_df = pd.read_csv(info_filename)
+        else:
+            rumination_df = pd.read_csv(info_filename, usecols=["File"] + info)
         info_df = (
             rumination_df.loc[rumination_df["File"] == id]
             .reset_index()
@@ -363,53 +338,6 @@ def create_df_from_epochs(id, correct, error, info_filename, info):
         participant_df = participant_df.append(epoch_df, ignore_index=True)
 
     return participant_df
-
-
-# TODO delete from explore_data
-def load_all_epochs(test_participants=False, test_epochs=False):
-    """Loads epochs for all participants.
-
-    On default, loads a train set: chooses only 80% of participants
-    and for each of them chooses 80% of epochs.
-    It will choose them deterministically.
-
-    Participants with less than 10 epochs per condition are rejected.
-
-    If test_participants is set to True, it will load remaining 20% of participants.
-    If test_epochs is set to True, it will load remaining 20% of epochs.
-    Test epochs are chronologically after train epochs,
-    because it reflects real usage (first callibration and then classification).
-
-    Returns a 5D structure:
-    PARTICIPANTS x [ERROR, CORRECT] x EPOCH X CHANNEL x TIMEPOINT
-    and the last 3 dimensions are a numpy array.
-
-    """
-    header_files = glob.glob("../data/responses/*.vhdr")
-    header_files = sorted(header_files)
-    h_train, h_test = train_test_split(header_files, test_size=0.2, random_state=0)
-    if test_participants:
-        header_files = h_test
-    else:
-        header_files = h_train
-
-    all_epochs = []
-    for file in header_files:
-        epochs = load_epochs_from_file(file)
-        error = epochs["error_response"]._data
-        correct = epochs["correct_response"]._data
-        if len(error) < 10 or len(correct) < 10:
-            # not enough data for this participant
-            continue
-        # shuffling is disabled to make sure test epochs are after train epochs
-        err_train, err_test = train_test_split(error, test_size=0.2, shuffle=False)
-        cor_train, cor_test = train_test_split(correct, test_size=0.2, shuffle=False)
-        if test_epochs:
-            all_epochs.append((err_test, cor_test))
-        else:
-            all_epochs.append((err_train, cor_train))
-
-    return all_epochs
 
 
 def clear_bads(epochs, bads, replacement=0):
