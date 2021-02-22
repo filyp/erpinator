@@ -90,7 +90,7 @@ def from_np_array(array_string):
     return np.array(ast.literal_eval(array_string))
 
 
-def load_epochs_from_file(file, reject_bad_segments="auto", mask=rone):
+def load_epochs_from_file(file, reject_bad_segments="auto", mask=None):
     """Load epochs from a header file.
 
     Args:
