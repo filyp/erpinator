@@ -14,16 +14,16 @@ repos:
   hooks:
     - id: nbstripout
 
-- repo: https://github.com/nbQA-dev/nbQA
-  rev: 0.3.5
-  hooks:
-    - id: nbqa-pyupgrade
-      args: [--nbqa-mutate]
-    - id: nbqa-black
-      args: [--nbqa-mutate]
-    # - id: nbqa-isort
-    #   args: [--nbqa-mutate]
-    # - id: nbqa-flake8
+# - repo: https://github.com/nbQA-dev/nbQA
+#   rev: 0.3.5
+#   hooks:
+#     - id: nbqa-pyupgrade
+#       args: [--nbqa-mutate]
+#     - id: nbqa-black
+#       args: [--nbqa-mutate]
+#     - id: nbqa-isort
+#       args: [--nbqa-mutate]
+#     - id: nbqa-flake8
 
 - repo: https://github.com/asottile/pyupgrade
   rev: v2.7.2
