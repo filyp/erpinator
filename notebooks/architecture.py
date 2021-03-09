@@ -216,6 +216,10 @@ class PCAForEachChannel(TransformerMixin, BaseEstimator):
 
 
 # fmt: off
+# comments are mean AUROCs for personal error correct classification
+# (for the first 5 participants) with SVR replaced with LDA
+
+# 0.941    with cwt__mwt='mexh'
 steps_parallel_pca = [
     ("ica_preprocessing", IcaPreprocessing()),
     ("ica", FastICA(random_state=0)),
@@ -225,6 +229,7 @@ steps_parallel_pca = [
     ("svr", SVR()),
 ]
 
+# 0.695
 steps_cwt_featurize = [
     ("ica_preprocessing", IcaPreprocessing()),
     ("ica", FastICA(random_state=0)),
@@ -236,6 +241,7 @@ steps_cwt_featurize = [
     ("svr", SVR()),
 ]
 
+# 0.745
 steps_cwt_featurize_parallel_pca = [
     ("ica_preprocessing", IcaPreprocessing()),
     ("ica", FastICA(random_state=0)),
@@ -266,6 +272,7 @@ steps_cwt_featurize_parallel_pca = [
 #     ("svr", SVR()),
 # ]
 
+# 0.869
 steps_2streams_peakfinding = [
     ("ica_preprocessing", IcaPreprocessing()),
     ("ica", FastICA(random_state=0)),
@@ -284,6 +291,7 @@ steps_2streams_peakfinding = [
     ("svr", SVR()),
 ]
 
+# 0.853
 steps_3streams = [
     ("ica_preprocessing", IcaPreprocessing()),
     ("ica", FastICA(random_state=0)),
@@ -306,6 +314,7 @@ steps_3streams = [
     ("svr", SVR()),
 ]
 
+# 0.854
 steps_peaks_and_power = [
     ("ica_preprocessing", IcaPreprocessing()),
     ("ica", FastICA(random_state=0)),
@@ -323,6 +332,35 @@ steps_peaks_and_power = [
     ("svr", SVR()),
 ]
 
+# 0.867
+steps_peaks = [
+    ("ica_preprocessing", IcaPreprocessing()),
+    ("ica", FastICA(random_state=0)),
+    ("featurize", FeatureUnion([
+        ('peaks', Pipeline([
+            ("cwt", Cwt(mwt="mexh", timepoints_count=timepoints_count)),
+            ("peak_finder", CwtPeakFinder()),
+        ])),
+    ])),
+    ("scaler", StandardScaler()),
+    ("svr", SVR()),
+]
+
+# 0.777
+steps_power = [
+    ("ica_preprocessing", IcaPreprocessing()),
+    ("ica", FastICA(random_state=0)),
+    ("featurize", FeatureUnion([
+        ('power', Pipeline([
+            ("cwt", Cwt(mwt="cmor0.5-1", timepoints_count=timepoints_count)),
+            ("pca", PCAForEachChannel(n_components=3, random_state=0)),
+        ])),
+    ])),
+    ("scaler", StandardScaler()),
+    ("svr", SVR()),
+]
+
+# 0.916
 steps_peaks_and_power_and_shape = [
     ("ica_preprocessing", IcaPreprocessing()),
     ("ica", FastICA(random_state=0)),
@@ -343,4 +381,40 @@ steps_peaks_and_power_and_shape = [
     ("scaler", StandardScaler()),
     ("svr", SVR()),
 ]
+
+# 0.919
+steps_peaks_and_shape = [
+    ("ica_preprocessing", IcaPreprocessing()),
+    ("ica", FastICA(random_state=0)),
+    ("featurize", FeatureUnion([
+        ('peaks', Pipeline([
+            ("cwt", Cwt(mwt="mexh", timepoints_count=timepoints_count)),
+            ("peak_finder", CwtPeakFinder()),
+        ])),
+        ('shape', Pipeline([
+            ("cwt", Cwt(mwt="mexh", timepoints_count=timepoints_count)),
+            ("pca", PCAForEachChannel(n_components=3, random_state=0)),
+        ])),
+    ])),
+    ("scaler", StandardScaler()),
+    ("svr", SVR()),
+]
 # fmt: on
+
+# ######
+# the best pipelines so far and their scores for all participant are
+# steps_parallel_pca                 0.930 ± 0.004
+# steps_peaks_and_shape              0.911 ± 0.005
+# steps_peaks_and_power_and_shape    0.911 ± 0.005
+
+# classifier scores with best predictor (steps_parallel_pca)
+# for all participants - personal
+# LDA         0.930
+# SVR C=0.1   0.922
+# kNR n=11    0.887
+
+
+# one model for all
+# LDA         0.91
+# SVR C=0.1   0.87
+# kNR n=11    0.86

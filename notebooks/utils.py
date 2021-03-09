@@ -111,13 +111,13 @@ def load_epochs_from_file(file, reject_bad_segments="auto", mask=None):
 
     """
     # Import the BrainVision data into an MNE Raw object
-    raw = mne.io.read_raw_brainvision("../data/" + file)
+    raw = mne.io.read_raw_brainvision(file)
 
     # Construct annotation filename
     annot_file = file[:-4] + "vmrk"
 
     # Read in the event information as MNE annotations
-    annotations = mne.read_annotations("../data/" + annot_file)
+    annotations = mne.read_annotations(annot_file)
 
     # Add the annotations to our raw object so we can use them with the data
     raw.set_annotations(annotations)
@@ -201,6 +201,7 @@ def create_df_data(
     test_epochs=False,
     info_filename=None,
     info="all",
+    personal=True,
 ):
     """Loads data for all participants and create DataFrame with optional additional info from given .csv file.
 
@@ -228,6 +229,10 @@ def create_df_data(
     info: array
         listed parameters from the info file to be loaded.
         if 'all', load all parameters
+    personal: bool
+        whether a model will be both trained and tested on epochs from one person
+        if false, person's epochs aren't split into test and train
+        and people aren't rejected if they have too few epochs
 
 
     Returns
@@ -235,7 +240,10 @@ def create_df_data(
     go_nogo_data_df : pandas.DataFrame
 
     """
-    header_files = glob.glob("../data/responses/*.vhdr")
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    header_files_glob = os.path.join(dir_path, "../data/responses/*.vhdr")
+    header_files = glob.glob(header_files_glob)
+
     header_files = sorted(header_files)
     go_nogo_data_df = pd.DataFrame()
 
@@ -258,21 +266,24 @@ def create_df_data(
         correct = participant_epochs["correct_response"]._data
 
         # exclude those participants who have too few samples
-        if len(error) < 10 or len(correct) < 10:
+        if len(error) < 5 or len(correct) < 5:
             # not enough data for this participant
             continue
 
-        # cut 20% of each participant's epochs for testing
-        # shuffling is disabled to make sure test epochs are after train epochs
-        # TODO: not sure if this step is necessary
-        err_train, err_test = train_test_split(error, test_size=0.2, shuffle=False)
-        cor_train, cor_test = train_test_split(correct, test_size=0.2, shuffle=False)
-        if test_epochs:
-            error = err_test
-            correct = cor_test
-        else:
-            error = err_train
-            correct = cor_train
+        if personal:
+            # cut 20% of each participant's epochs for testing
+            # shuffling is disabled to make sure test epochs are after train epochs
+            # TODO: not sure if this step is necessary
+            err_train, err_test = train_test_split(error, test_size=0.2, shuffle=False)
+            cor_train, cor_test = train_test_split(
+                correct, test_size=0.2, shuffle=False
+            )
+            if test_epochs:
+                error = err_test
+                correct = cor_test
+            else:
+                error = err_train
+                correct = cor_train
 
         # construct dataframe for participant with: id|epoch_data|response_type|additional info...
         participant_df = create_df_from_epochs(
