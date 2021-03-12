@@ -79,11 +79,13 @@ class IcaPreprocessing(TransformerMixin, BaseEstimator):
 
 
 class Cwt(TransformerMixin, BaseEstimator):
-    def __init__(self, timepoints_count, mwt="morl", cwt_density=2):
+    def __init__(self, timepoints_count, mwt="morl", cwt_density=2, cwt_octaves=7):
+        # for octaves=6, the highest frequency is 45.25 Hz
         super().__init__()
         self.timepoints_count = timepoints_count
         self.mwt = mwt
         self.cwt_density = cwt_density
+        self.cwt_octaves = cwt_octaves
 
     def fit(self, X, y=None):
         return self
@@ -100,7 +102,10 @@ class Cwt(TransformerMixin, BaseEstimator):
         cwt_per_channel = []
         for data in data_per_channel:
             data_cwt = np.array(
-                [cwt(epoch, self.mwt, self.cwt_density) for epoch in data]
+                [
+                    cwt(epoch, self.mwt, self.cwt_density, self.cwt_octaves)
+                    for epoch in data
+                ]
             )
             cwt_per_channel.append(data_cwt)
         cwt_per_channel = np.array(cwt_per_channel)
