@@ -65,9 +65,9 @@ def get_separations(cond1, cond2):
     return between_class_scatter / within_class_scatter
 
 
-def get_wavelet(latency, frequency, times):
+def get_wavelet(latency, frequency, times, mwt="mexh"):
     signal_frequency = 1 / (times[1] - times[0])
-    mother = pywt.ContinuousWavelet("mexh")
+    mother = pywt.ContinuousWavelet(mwt)
     scale = signal_frequency / frequency
     mex, _ = mother.wavefun(length=int(scale * 4))
 
