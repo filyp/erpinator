@@ -19,6 +19,7 @@ tmin, tmax = -0.1, 0.6
 signal_frequency = 256
 ERROR = 0
 CORRECT = 1
+blue_black_red = [[0, "rgb(0,100,255)"], [0.5, "rgb(0,0,0)"], [1, "rgb(255,40,0)"]]
 
 base_layout = dict(
     template="plotly_dark",

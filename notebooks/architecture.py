@@ -240,6 +240,16 @@ steps_parallel_pca = [
     ("svr", SVR()),
 ]
 
+steps_simple = [
+    ("ica_preprocessing", IcaPreprocessing()),
+    ("ica", FastICA(random_state=0)),
+    ("ica_postprocessing", IcaPostprocessing(timepoints_count=timepoints_count)),
+    ("postprocessing", PostprocessingTransformer()),
+    ("pca", PCA(random_state=0)),
+    ("scaler", StandardScaler()),
+    ("svr", SVR()),
+]
+
 # 0.695
 steps_cwt_featurize = [
     ("ica_preprocessing", IcaPreprocessing()),
@@ -379,7 +389,6 @@ steps_power = [
     ("svr", SVR()),
 ]
 
-# 0.916
 steps_peaks_and_power_and_shape = [
     ("ica_preprocessing", IcaPreprocessing()),
     ("ica", FastICA(random_state=0)),
@@ -394,7 +403,6 @@ steps_peaks_and_power_and_shape = [
             ("pca", PCAForEachChannel(n_components=3, random_state=0)),
         ])),
         ('shape', Pipeline([
-            ("cwt", Cwt(mwt="mexh")),
             ("pca", PCAForEachChannel(n_components=3, random_state=0)),
         ])),
     ])),
