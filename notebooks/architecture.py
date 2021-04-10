@@ -32,6 +32,7 @@ from sklearn.preprocessing import FunctionTransformer
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
 from sklearn.tree import DecisionTreeRegressor
+from scipy.signal import butter, lfilter
 
 from utils import cwt
 
@@ -66,6 +67,91 @@ peak_features = {
 }
 
 
+class LowpassFilter(TransformerMixin, BaseEstimator):
+    def __init__(self):
+        super().__init__()
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        fs = signal_frequency
+        cutoff = 45  # Hz
+        B, A = butter(
+            6, cutoff / (fs / 2), btype="low", analog=False
+        )  # 6th order Butterworth low-pass
+
+        filtered_epochs_per_channel = []
+        for channel in X:
+            filtered_epochs = np.array(
+                [lfilter(B, A, epoch, axis=0) for epoch in channel]
+            )
+            filtered_epochs_per_channel.append(filtered_epochs)
+        filtered_epochs_per_channel = np.array(filtered_epochs_per_channel)
+        return filtered_epochs_per_channel
+
+
+class ChannelExtraction(TransformerMixin, BaseEstimator):
+    def __init__(self, channel_list):
+        super().__init__()
+        self.channel_list = channel_list
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        epochs_per_channels = np.transpose(X, (1, 0, 2))
+        epochs_per_selected_channels = []
+
+        for channel in self.channel_list:
+            this_data = epochs_per_channels[channel]
+            epochs_per_selected_channels.append(this_data)
+
+        epochs_per_selected_channels = np.array(epochs_per_selected_channels)
+        selected_channels_per_epoch = np.transpose(
+            epochs_per_selected_channels, (1, 0, 2)
+        )
+        #         print(f"EXTRACTION {selected_channels_per_epoch.shape}")
+        return selected_channels_per_epoch
+
+
+# swap channels and epochs axes: from epoch_channel_timepoints to channel_epoch_timepoints and vice versa
+class ChannelDataSwap(TransformerMixin, BaseEstimator):
+    def __init__(self):
+        super().__init__()
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        data_channel_swaped = np.transpose(X, (1, 0, 2))
+        return data_channel_swaped
+
+
+class BinTransformer(TransformerMixin, BaseEstimator):
+    def __init__(self, step):
+        super().__init__()
+        self.step = step
+
+    def bin_epoch(self, epoch):
+        new_channels = []
+        for channel in epoch:
+            bins_channel = []
+            index = 0
+            while index + self.step < len(channel):
+                this_bin = np.mean(channel[index : index + self.step])
+                bins_channel.append(this_bin)
+                index += self.step
+            new_channels.append(bins_channel)
+        return new_channels
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        binned_data = np.array([self.bin_epoch(epoch) for epoch in X])
+
+
 class IcaPreprocessing(TransformerMixin, BaseEstimator):
     def __init__(self):
         super().__init__()
@@ -78,14 +164,10 @@ class IcaPreprocessing(TransformerMixin, BaseEstimator):
         return timepoints_per_channel.T
 
 
-class Cwt(TransformerMixin, BaseEstimator):
-    def __init__(self, timepoints_count, mwt="morl", cwt_density=2, cwt_octaves=7):
-        # for octaves=6, the highest frequency is 45.25 Hz
+class IcaPostprocessing(TransformerMixin, BaseEstimator):
+    def __init__(self, timepoints_count):
         super().__init__()
         self.timepoints_count = timepoints_count
-        self.mwt = mwt
-        self.cwt_density = cwt_density
-        self.cwt_octaves = cwt_octaves
 
     def fit(self, X, y=None):
         return self
@@ -99,8 +181,23 @@ class Cwt(TransformerMixin, BaseEstimator):
             ica_n_components, epochs_count, self.timepoints_count
         )
 
+        return data_per_channel
+
+
+class Cwt(TransformerMixin, BaseEstimator):
+    def __init__(self, mwt="morl", cwt_density=2, cwt_octaves=6):
+        # for octaves=6, the highest frequency is 45.25 Hz
+        super().__init__()
+        self.mwt = mwt
+        self.cwt_density = cwt_density
+        self.cwt_octaves = cwt_octaves
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
         cwt_per_channel = []
-        for data in data_per_channel:
+        for data in X:
             data_cwt = np.array(
                 [
                     cwt(epoch, self.mwt, self.cwt_density, self.cwt_octaves)
@@ -110,6 +207,42 @@ class Cwt(TransformerMixin, BaseEstimator):
             cwt_per_channel.append(data_cwt)
         cwt_per_channel = np.array(cwt_per_channel)
         return cwt_per_channel
+
+
+# I commented out the implementation below because I split it and I'm using IcaPostprocessing+Cwt
+
+# class Cwt(TransformerMixin, BaseEstimator):
+#     def __init__(self, timepoints_count, mwt="morl", cwt_density=2, cwt_octaves=7):
+#         # for octaves=6, the highest frequency is 45.25 Hz
+#         super().__init__()
+#         self.timepoints_count = timepoints_count
+#         self.mwt = mwt
+#         self.cwt_density = cwt_density
+#         self.cwt_octaves = cwt_octaves
+
+#     def fit(self, X, y=None):
+#         return self
+
+#     def transform(self, X):
+#         X_ica_transposed = X.T
+#         ica_n_components = X.shape[1]
+
+#         epochs_count = int(X_ica_transposed.shape[1] / self.timepoints_count)
+#         data_per_channel = X_ica_transposed.reshape(
+#             ica_n_components, epochs_count, self.timepoints_count
+#         )
+
+#         cwt_per_channel = []
+#         for data in data_per_channel:
+#             data_cwt = np.array(
+#                 [
+#                     cwt(epoch, self.mwt, self.cwt_density, self.cwt_octaves)
+#                     for epoch in data
+#                 ]
+#             )
+#             cwt_per_channel.append(data_cwt)
+#         cwt_per_channel = np.array(cwt_per_channel)
+#         return cwt_per_channel
 
 
 class CwtFeatureVectorizer(TransformerMixin, BaseEstimator):
