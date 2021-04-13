@@ -231,9 +231,9 @@ class PCAForEachChannel(TransformerMixin, BaseEstimator):
 
 # 0.941    with cwt__mwt='mexh'
 steps_parallel_pca = [
-    ("ica_preprocessing", IcaPreprocessing()),
-    ("ica", FastICA(random_state=0)),
-    ("ica_postprocessing", IcaPostprocessing(timepoints_count=timepoints_count)),
+    ("pre_spatial_filter", IcaPreprocessing()),
+    ("spatial_filter", FastICA(random_state=0)),
+    ("post_spatial_filter", IcaPostprocessing(timepoints_count=timepoints_count)),
     ("cwt", Cwt()),
     ("pca", PCAForEachChannel(random_state=0)),
     ("scaler", StandardScaler()),
@@ -241,9 +241,9 @@ steps_parallel_pca = [
 ]
 
 steps_simple = [
-    ("ica_preprocessing", IcaPreprocessing()),
-    ("ica", FastICA(random_state=0)),
-    ("ica_postprocessing", IcaPostprocessing(timepoints_count=timepoints_count)),
+    ("pre_spatial_filter", IcaPreprocessing()),
+    ("spatial_filter", FastICA(random_state=0)),
+    ("post_spatial_filter", IcaPostprocessing(timepoints_count=timepoints_count)),
     ("postprocessing", PostprocessingTransformer()),
     ("pca", PCA(random_state=0)),
     ("scaler", StandardScaler()),
@@ -252,9 +252,9 @@ steps_simple = [
 
 # 0.695
 steps_cwt_featurize = [
-    ("ica_preprocessing", IcaPreprocessing()),
-    ("ica", FastICA(random_state=0)),
-    ("ica_postprocessing", IcaPostprocessing(timepoints_count=timepoints_count)),
+    ("pre_spatial_filter", IcaPreprocessing()),
+    ("spatial_filter", FastICA(random_state=0)),
+    ("post_spatial_filter", IcaPostprocessing(timepoints_count=timepoints_count)),
     ("cwt", Cwt()),
     ("cwt_feature", CwtFeatureVectorizer(feature_dict=shape_features)),
     ("postprocessing", PostprocessingTransformer()),
@@ -265,9 +265,9 @@ steps_cwt_featurize = [
 
 # 0.745
 steps_cwt_featurize_parallel_pca = [
-    ("ica_preprocessing", IcaPreprocessing()),
-    ("ica", FastICA(random_state=0)),
-    ("ica_postprocessing", IcaPostprocessing(timepoints_count=timepoints_count)),
+    ("pre_spatial_filter", IcaPreprocessing()),
+    ("spatial_filter", FastICA(random_state=0)),
+    ("post_spatial_filter", IcaPostprocessing(timepoints_count=timepoints_count)),
     ("cwt", Cwt(mwt="morl")),
     ("cwt_feature", CwtFeatureVectorizer(feature_dict=shape_features)),
     ("pca", PCAForEachChannel(random_state=0)),
@@ -277,9 +277,9 @@ steps_cwt_featurize_parallel_pca = [
 
 # steps_2streams_peakfinding is better
 # steps_2streams = [
-#     ("ica_preprocessing", IcaPreprocessing()),
-#     ("ica", FastICA(random_state=0)),
-#     ("ica_postprocessing", IcaPostprocessing(timepoints_count=timepoints_count)),
+#     ("pre_spatial_filter", IcaPreprocessing()),
+#     ("spatial_filter", FastICA(random_state=0)),
+#     ("post_spatial_filter", IcaPostprocessing(timepoints_count=timepoints_count)),
 #     ("featurize", FeatureUnion([
 #         ('shape', Pipeline([
 #             ("cwt", Cwt(mwt="morl")),
@@ -298,9 +298,9 @@ steps_cwt_featurize_parallel_pca = [
 
 # 0.869
 steps_2streams_peakfinding = [
-    ("ica_preprocessing", IcaPreprocessing()),
-    ("ica", FastICA(random_state=0)),
-    ("ica_postprocessing", IcaPostprocessing(timepoints_count=timepoints_count)),
+    ("pre_spatial_filter", IcaPreprocessing()),
+    ("spatial_filter", FastICA(random_state=0)),
+    ("post_spatial_filter", IcaPostprocessing(timepoints_count=timepoints_count)),
     ("featurize", FeatureUnion([
         ('shape', Pipeline([
             ("cwt", Cwt(mwt="morl")),
@@ -318,9 +318,9 @@ steps_2streams_peakfinding = [
 
 # 0.853
 steps_3streams = [
-    ("ica_preprocessing", IcaPreprocessing()),
-    ("ica", FastICA(random_state=0)),
-    ("ica_postprocessing", IcaPostprocessing(timepoints_count=timepoints_count)),
+    ("pre_spatial_filter", IcaPreprocessing()),
+    ("spatial_filter", FastICA(random_state=0)),
+    ("post_spatial_filter", IcaPostprocessing(timepoints_count=timepoints_count)),
     ("featurize", FeatureUnion([
         ('shape', Pipeline([
             ("cwt", Cwt(mwt="morl")),
@@ -342,9 +342,9 @@ steps_3streams = [
 
 # 0.854
 steps_peaks_and_power = [
-    ("ica_preprocessing", IcaPreprocessing()),
-    ("ica", FastICA(random_state=0)),
-    ("ica_postprocessing", IcaPostprocessing(timepoints_count=timepoints_count)),
+    ("pre_spatial_filter", IcaPreprocessing()),
+    ("spatial_filter", FastICA(random_state=0)),
+    ("post_spatial_filter", IcaPostprocessing(timepoints_count=timepoints_count)),
     ("featurize", FeatureUnion([
         ('peaks', Pipeline([
             ("cwt", Cwt(mwt="mexh")),
@@ -361,9 +361,9 @@ steps_peaks_and_power = [
 
 # 0.867
 steps_peaks = [
-    ("ica_preprocessing", IcaPreprocessing()),
-    ("ica", FastICA(random_state=0)),
-    ("ica_postprocessing", IcaPostprocessing(timepoints_count=timepoints_count)),
+    ("pre_spatial_filter", IcaPreprocessing()),
+    ("spatial_filter", FastICA(random_state=0)),
+    ("post_spatial_filter", IcaPostprocessing(timepoints_count=timepoints_count)),
     ("featurize", FeatureUnion([
         ('peaks', Pipeline([
             ("cwt", Cwt(mwt="mexh")),
@@ -376,9 +376,9 @@ steps_peaks = [
 
 # 0.777
 steps_power = [
-    ("ica_preprocessing", IcaPreprocessing()),
-    ("ica", FastICA(random_state=0)),
-    ("ica_postprocessing", IcaPostprocessing(timepoints_count=timepoints_count)),
+    ("pre_spatial_filter", IcaPreprocessing()),
+    ("spatial_filter", FastICA(random_state=0)),
+    ("post_spatial_filter", IcaPostprocessing(timepoints_count=timepoints_count)),
     ("featurize", FeatureUnion([
         ('power', Pipeline([
             ("cwt", Cwt(mwt="cmor0.5-1")),
@@ -390,9 +390,9 @@ steps_power = [
 ]
 
 steps_peaks_and_power_and_shape = [
-    ("ica_preprocessing", IcaPreprocessing()),
-    ("ica", FastICA(random_state=0)),
-    ("ica_postprocessing", IcaPostprocessing(timepoints_count=timepoints_count)),
+    ("pre_spatial_filter", IcaPreprocessing()),
+    ("spatial_filter", FastICA(random_state=0)),
+    ("post_spatial_filter", IcaPostprocessing(timepoints_count=timepoints_count)),
     ("featurize", FeatureUnion([
         ('peaks', Pipeline([
             ("cwt", Cwt(mwt="mexh")),
@@ -412,9 +412,9 @@ steps_peaks_and_power_and_shape = [
 
 # 0.919
 steps_peaks_and_shape = [
-    ("ica_preprocessing", IcaPreprocessing()),
-    ("ica", FastICA(random_state=0)),
-    ("ica_postprocessing", IcaPostprocessing(timepoints_count=timepoints_count)),
+    ("pre_spatial_filter", IcaPreprocessing()),
+    ("spatial_filter", FastICA(random_state=0)),
+    ("post_spatial_filter", IcaPostprocessing(timepoints_count=timepoints_count)),
     ("featurize", FeatureUnion([
         ('peaks', Pipeline([
             ("cwt", Cwt(mwt="mexh")),

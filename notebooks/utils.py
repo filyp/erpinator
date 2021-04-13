@@ -4,14 +4,22 @@ import os
 import ast
 import os.path as op
 from collections import defaultdict
+from copy import deepcopy
 
 import mne
+import scipy
 import numpy as np
 import pywt
 import pandas as pd
 from scipy import signal
 from scipy.interpolate import interp1d
+from sklearn.model_selection import KFold
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import ParameterGrid
+from sklearn.pipeline import Pipeline
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.metrics import r2_score
+from sklearn.metrics import roc_auc_score
 
 
 # Start and end of the segments
@@ -668,3 +676,47 @@ def get_annotations(fname):
         annotations.append(annot)
 
     return annotations
+
+
+def custom_gridsearch(X, y, steps, cv, regressor_params, memory):
+    print("AUROC   corr     r2")
+
+    # get params randomly
+    all_params = list(ParameterGrid(regressor_params))
+    # shuffle(all_params)
+
+    for params in all_params:
+        pipelines = []
+        scores = []
+        kf = KFold(n_splits=cv)
+        for train_index, test_index in kf.split(X, y):
+            X_train, X_test = X[train_index], X[test_index]
+            y_train, y_test = y[train_index], y[test_index]
+
+            pipeline = Pipeline(deepcopy(steps), memory=memory)
+            pipeline.set_params(**params)
+            pipeline.fit(X_train, y_train)
+
+            if type(steps[-1][1]) == LinearDiscriminantAnalysis:
+                y_pred = pipeline.predict_proba(X_test)[:, 1]
+            else:
+                y_pred = pipeline.predict(X_test)
+            corr = np.corrcoef(y_test, y_pred)[0][1]
+            r2 = r2_score(y_test, y_pred)
+            auroc = roc_auc_score(y_test, y_pred)  # it's different in classification!
+
+            scores.append([auroc, corr, r2])
+            print(f"{auroc:.3f}  {corr:.3f}  {r2:.3f}")
+
+            pipelines.append(pipeline)
+
+        # print scores
+        print(f"{str(params):126}")
+        means = np.mean(scores, axis=0)
+        sems = scipy.stats.sem(scores, axis=0)
+        for mean, sem in zip(means, sems):
+            print(f"{mean:5.2f}±{sem:4.2f}", end="   ")
+        print()
+
+    # note that it returns pipelines only for last parameters in the grid
+    return pipelines
