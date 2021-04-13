@@ -32,16 +32,17 @@ base_layout = dict(
 )
 
 
-def get_frequencies(density=2):
-    return 2 ** (np.arange(7, step=1 / density))
+def get_frequencies(density=2, octaves=7):
+    # for octaves=6, the highest frequency is 45.25 Hz
+    return 2 ** (np.arange(octaves, step=1 / density))
 
 
-def cwt(epoch, mwt="mexh", density=2):
+def cwt(epoch, mwt="mexh", density=2, octaves=7):
     center_wavelet_frequency = pywt.scale2frequency(mwt, [1])[0]
     const = center_wavelet_frequency * signal_frequency
 
     # construct scales
-    scales = const / get_frequencies(density)
+    scales = const / get_frequencies(density, octaves)
 
     # compute coeffs
     coef, freqs = pywt.cwt(
