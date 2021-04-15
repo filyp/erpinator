@@ -47,6 +47,18 @@ def abs_diffs_signal(t, m, e):
     return np.sum(np.abs(np.diff(m)))
 
 
+def mean_energy_signal(t, m, e):
+    return np.mean(m ** 2)
+
+
+def skew_signal(t, m, e):
+    return scipy.stats.skew(m)
+
+
+def mean_signal(t, m, e):
+    return np.mean(m)
+
+
 def peak_ind(t, m, e):
     return np.argmax(np.abs(m))
 

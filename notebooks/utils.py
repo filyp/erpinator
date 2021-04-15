@@ -20,6 +20,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.metrics import r2_score
 from sklearn.metrics import roc_auc_score
+from ipywidgets import HBox, VBox
 
 
 # Start and end of the segments
