@@ -683,14 +683,20 @@ def get_annotations(fname):
 def custom_gridsearch(X, y, steps, cv, regressor_params, memory):
     print("AUROC   corr     r2")
 
-    # get params randomly
-    all_params = list(ParameterGrid(regressor_params))
-    # shuffle(all_params)
+    try:
+        # assume that regressor_params is a grid specification
+        all_params = list(ParameterGrid(regressor_params))
+        # # get params randomly
+        # shuffle(all_params)
+    except TypeError:
+        # just passing a single dict of params
+        all_params = [regressor_params]
 
     for params in all_params:
         pipelines = []
         scores = []
         kf = KFold(n_splits=cv)
+        #         kf = KFold(n_splits=cv, shuffle=True)
         for train_index, test_index in kf.split(X, y):
             X_train, X_test = X[train_index], X[test_index]
             y_train, y_test = y[train_index], y[test_index]
@@ -705,7 +711,11 @@ def custom_gridsearch(X, y, steps, cv, regressor_params, memory):
                 y_pred = pipeline.predict(X_test)
             corr = np.corrcoef(y_test, y_pred)[0][1]
             r2 = r2_score(y_test, y_pred)
-            auroc = roc_auc_score(y_test, y_pred)  # it's different in classification!
+            if len(set(y)) == 2:
+                # ys are discrete, so the AUROC can be conputed
+                auroc = roc_auc_score(y_test, y_pred)
+            else:
+                auroc = np.nan
 
             scores.append([auroc, corr, r2])
             print(f"{auroc:.3f}  {corr:.3f}  {r2:.3f}")
@@ -722,3 +732,66 @@ def custom_gridsearch(X, y, steps, cv, regressor_params, memory):
 
     # note that it returns pipelines only for last parameters in the grid
     return pipelines
+
+
+# def custom_gridsearch_separate_persons(epochs, steps, cv, regressor_params, memory):
+#     print("AUROC   corr     r2")
+
+#     try:
+#         # assume that regressor_params is a grid specification
+#         all_params = list(ParameterGrid(regressor_params))
+#         # # get params randomly
+#         # shuffle(all_params)
+#     except TypeError:
+#         # just passing a single dict of params
+#         all_params = [regressor_params]
+
+#     for params in all_params:
+#         pipelines = []
+#         scores = []
+
+#         ids = epochs["id"].unique()
+#         kf = KFold(n_splits=cv, shuffle=True)
+#         for train_index, test_index in kf.split(ids):
+#             train_ids = ids[train_index]
+#             test_ids = ids[test_index]
+
+#             train_epochs = epochs[epochs["id"].isin(train_ids)]
+#             test_epochs = epochs[epochs["id"].isin(test_ids)]
+
+#             X_train = np.array(train_epochs["epoch"].to_list())
+#             y_train = np.array(train_epochs["marker"].to_list())
+#             X_test = np.array(test_epochs["epoch"].to_list())
+#             y_test = np.array(test_epochs["marker"].to_list())
+
+#             pipeline = Pipeline(deepcopy(steps), memory=memory)
+#             pipeline.set_params(**params)
+#             pipeline.fit(X_train, y_train)
+
+#             if type(steps[-1][1]) == LinearDiscriminantAnalysis:
+#                 y_pred = pipeline.predict_proba(X_test)[:, 1]
+#             else:
+#                 y_pred = pipeline.predict(X_test)
+#             corr = np.corrcoef(y_test, y_pred)[0][1]
+#             r2 = r2_score(y_test, y_pred)
+#             if len(set(y)) == 2:
+#                 # ys are discrete, so the AUROC can be conputed
+#                 auroc = roc_auc_score(y_test, y_pred)
+#             else:
+#                 auroc = np.nan
+
+#             scores.append([auroc, corr, r2])
+#             print(f"{auroc:.3f}  {corr:.3f}  {r2:.3f}")
+
+#             pipelines.append(pipeline)
+
+#         # print scores
+#         print(f"{str(params):126}")
+#         means = np.mean(scores, axis=0)
+#         sems = scipy.stats.sem(scores, axis=0)
+#         for mean, sem in zip(means, sems):
+#             print(f"{mean:5.2f}±{sem:4.2f}", end="   ")
+#         print()
+
+#     # note that it returns pipelines only for last parameters in the grid
+#     return pipelines
