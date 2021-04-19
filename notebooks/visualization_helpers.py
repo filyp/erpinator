@@ -235,9 +235,7 @@ def plot_pca_shape(pca_comps, mwt, clf_coefs, xs, max_amp, scale=1, heatmap=Fals
         accs.append(acc)
 
     # show also the sum of all pca comps weighted by importance
-    acc = np.zeros_like(accs[-1])
-    for comp, coef in zip(pca_comps, clf_coefs):
-        acc += comp * coef
+    acc = np.sum(accs, axis=0)
     accs.append(acc)
 
     if not heatmap:
@@ -411,3 +409,121 @@ def visualize_pipeline(
 
 # split_index = 0
 # visualize_pipeline_but_focus_on_pca_comps(pipelines[split_index])
+
+
+def visualize_time_features_as_heatmap(
+    pipeline,
+    times,
+    clf_coefs_all=None,
+    max_amp=0.018,
+    scale=1,
+    one_pca=True,
+    flip_mask=None,
+):
+    """
+    pipeline
+        sklearn Pipeline to be visualized
+    times
+        list of all timepoint values in milliseconds
+    clf_coefs_ll
+        optional classifier coefficients to be used to weigh component plots
+        if left as None, assume that a linear classifier was used, and use its coefs
+    max_amp
+        maximum amplitude for component plotting
+    scale
+        scale of the plots
+    one_pca
+        whether only one PCA if fitted instead of a separate PCA for each spatial component
+    flip_mask
+        optional array of 1s and -1s
+        its length must be the same as the number of spatial components
+        setting -1 for a corresponding spatial component flips its sign for better readability
+    """
+
+    fitted_steps = dict(pipeline.steps)
+    spatial = fitted_steps["spatial_filter"]
+
+    if "pca" in fitted_steps:
+        dims_reduction = fitted_steps["pca"]
+    elif "feature_selection" in fitted_steps:
+        dims_reduction = fitted_steps["feature_selection"]
+
+    if clf_coefs_all is None:
+        if "lasso" in fitted_steps:
+            clf_coefs_all = fitted_steps["lasso"].coef_
+        elif "en" in fitted_steps:
+            clf_coefs_all = fitted_steps["en"].coef_
+        elif "lda" in fitted_steps:
+            clf_coefs_all = fitted_steps["lda"].coef_[0]
+
+    if "binning" in fitted_steps:
+        bin_step = fitted_steps["binning"].step
+        xs = times[bin_step // 2 :: bin_step]
+    else:
+        xs = times
+
+    if one_pca:
+        pca_comps_separated = dims_reduction.components_.reshape(
+            len(dims_reduction.components_), len(spatial.components_), -1
+        )
+    else:
+        pcas = dims_reduction.PCAs
+        clf_coefs_for_each_ica_comp = clf_coefs_all.reshape(
+            len(spatial.components_), -1
+        )
+        # the line below was tested visually to be the wrong unflattening
+        # clf_coefs_for_each_ica_comp = clf_coefs_all.reshape(-1, len(ica.components_)).T
+
+    summed_time_components = []
+    for ica_comp_num, ica_comp in enumerate(spatial.components_):
+        if one_pca:
+            pca_comps = pca_comps_separated[:, ica_comp_num, :]
+            clf_coefs = clf_coefs_all
+        else:
+            pca_comps = pcas[ica_comp_num].components_
+            clf_coefs = clf_coefs_for_each_ica_comp[ica_comp_num]
+
+        if "cwt" in fitted_steps:
+            mwt = fitted_steps["cwt"].mwt
+        else:
+            mwt = None
+
+        if flip_mask is not None:
+            ica_comp = ica_comp * flip_mask[ica_comp_num]
+            pca_comps = pca_comps * flip_mask[ica_comp_num]
+
+        accs = []
+        for i, comp in enumerate(pca_comps):
+            if mwt is not None:
+                # CWT+PCA in practice, multiplies by this shape
+                # TODO test this block, if this is really the shape
+                comp = comp.reshape(-1, timepoints_count)
+                acc = np.zeros_like(xs)
+                for amps_for_freq, freq in zip(comp, get_frequencies()):
+                    for amp, latency in zip(amps_for_freq, xs):
+                        wv = get_wavelet(latency, freq, xs, mwt)
+                        acc += wv * amp
+            else:
+                acc = np.copy(comp)
+
+            # weight by the component importance from classifier
+            acc *= clf_coefs[i]
+            accs.append(acc)
+
+        # show also the sum of all pca comps weighted by importance
+        acc = np.sum(accs, axis=0)
+        summed_time_components.append(acc)
+
+    fig = go.FigureWidget()
+    fig.update_layout(**base_layout)
+    fig.update_layout(height=350 * scale, width=600 * scale)
+    # reverse components for more intuitive plotting
+    summed_time_components = summed_time_components[::-1]
+    fig.add_heatmap(
+        x=xs,
+        z=summed_time_components,
+        zmin=-max_amp,
+        zmax=max_amp,
+        colorscale=blue_black_red,
+    )
+    return fig
