@@ -184,10 +184,11 @@ def visualize_spatial_components(
     fitted_steps = dict(pipeline.steps)
     spatial = fitted_steps["spatial_filter"]
 
+    plots = []
     for spatial_comp_num, spatial_comp in enumerate(spatial.components_):
         if flip_mask is not None:
             spatial_comp = spatial_comp * flip_mask[spatial_comp_num]
-        display(
+        plots.append(
             HBox(
                 [
                     plot_ica_comp(
@@ -206,6 +207,7 @@ def visualize_spatial_components(
                 ]
             )
         )
+    return VBox(plots)
 
 
 def plot_pca_shape(pca_comps, mwt, clf_coefs, xs, max_amp, scale=1, heatmap=False):
@@ -324,6 +326,7 @@ def visualize_pipeline(
         # the line below was tested visually to be the wrong unflattening
         # clf_coefs_for_each_ica_comp = clf_coefs_all.reshape(-1, len(ica.components_)).T
 
+    plots = []
     for ica_comp_num, ica_comp in enumerate(spatial.components_):
         if one_pca:
             pca_comps = pca_comps_separated[:, ica_comp_num, :]
@@ -341,7 +344,7 @@ def visualize_pipeline(
             ica_comp = ica_comp * flip_mask[ica_comp_num]
             pca_comps = pca_comps * flip_mask[ica_comp_num]
 
-        display(
+        plots.append(
             HBox(
                 [
                     plot_ica_comp(
@@ -360,6 +363,7 @@ def visualize_pipeline(
             )
         )
         # display(HBox([plot_ica_comp(ica_comp), plot_pca_comps_on_cwt(pca_comps)]))
+    return VBox(plots)
 
 
 # def visualize_pipeline_but_focus_on_pca_comps(
