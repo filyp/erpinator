@@ -182,7 +182,10 @@ def visualize_spatial_components(
         setting -1 for a corresponding spatial component flips its sign for better readability
     """
     fitted_steps = dict(pipeline.steps)
-    spatial = fitted_steps["spatial_filter"]
+    if "spatial_filter" in fitted_steps:
+        spatial = fitted_steps["spatial_filter"]
+    elif "ica" in fitted_steps:
+        spatial = fitted_steps["ica"]
 
     plots = []
     for spatial_comp_num, spatial_comp in enumerate(spatial.components_):
@@ -293,7 +296,11 @@ def visualize_pipeline(
         print("the component on the bottom is the sum of all the above components")
 
     fitted_steps = dict(pipeline.steps)
-    spatial = fitted_steps["spatial_filter"]
+
+    if "spatial_filter" in fitted_steps:
+        spatial = fitted_steps["spatial_filter"]
+    elif "ica" in fitted_steps:
+        spatial = fitted_steps["ica"]
 
     if "pca" in fitted_steps:
         dims_reduction = fitted_steps["pca"]
@@ -445,7 +452,10 @@ def visualize_time_features_as_heatmap(
     """
 
     fitted_steps = dict(pipeline.steps)
-    spatial = fitted_steps["spatial_filter"]
+    if "spatial_filter" in fitted_steps:
+        spatial = fitted_steps["spatial_filter"]
+    elif "ica" in fitted_steps:
+        spatial = fitted_steps["ica"]
 
     if "pca" in fitted_steps:
         dims_reduction = fitted_steps["pca"]
