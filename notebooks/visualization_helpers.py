@@ -312,6 +312,8 @@ def visualize_pipeline(
             clf_coefs_all = fitted_steps["lasso"].coef_
         elif "en" in fitted_steps:
             clf_coefs_all = fitted_steps["en"].coef_
+        elif "lr_en" in fitted_steps:
+            clf_coefs_all = fitted_steps["lr_en"].coef_[0]
         elif "lda" in fitted_steps:
             clf_coefs_all = fitted_steps["lda"].coef_[0]
 
@@ -467,6 +469,8 @@ def visualize_time_features_as_heatmap(
             clf_coefs_all = fitted_steps["lasso"].coef_
         elif "en" in fitted_steps:
             clf_coefs_all = fitted_steps["en"].coef_
+        elif "lr_en" in fitted_steps:
+            clf_coefs_all = fitted_steps["lr_en"].coef_[0]
         elif "lda" in fitted_steps:
             clf_coefs_all = fitted_steps["lda"].coef_[0]
 
@@ -541,3 +545,37 @@ def visualize_time_features_as_heatmap(
         colorscale=blue_black_red,
     )
     return fig
+
+
+# for checking stability
+def correlations(a0, a1):
+    """Find correlation matrix between 2 matrices.
+    It's similar to np.corrcoef, but it doesn't subtract the mean,
+    when calculating the sum of squares.
+
+    Parameters
+    ----------
+    a0, a1 : array_like
+        2-D arrays containing multiple variables and observations.
+        Each row represents a variable, and each column a single
+        observation of all those variables.
+        Their number of columns must be equal.
+    """
+    cov = a0 @ a1.T
+    sum_of_squares0 = np.sum(a0 * a0, axis=1).reshape(-1, 1)
+    sum_of_squares1 = np.sum(a1 * a1, axis=1).reshape(1, -1)
+    return cov / (sum_of_squares0 @ sum_of_squares1) ** (1 / 2)
+
+
+def factor_similarity(a0, a1):
+    """Measure how similar are the factors.
+    Reordering and rescaling them doesn't change the similarity.
+    """
+    corr = correlations(a0, a1)
+    sim = abs(corr)  # don't care if factors' sign is flipped
+    sim_hor = sim.max(axis=0)  # don't care if factors are reordered
+    sim_ver = sim.max(axis=1)
+    # in case some row or comuln have two candidates, choose the more pessimistic axis
+    mean_sim = min(sim_hor.mean(), sim_ver.mean())
+    # TODO? a more robust way would be to generate permutations and chack them
+    return mean_sim

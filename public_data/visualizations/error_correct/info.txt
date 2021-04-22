@@ -1,0 +1,20 @@
+steps used:
+[('pre_spatial_filter', IcaPreprocessing()),
+('spatial_filter', PCA(random_state=0)),
+('post_spatial_filter', IcaPostprocessing(timepoints_count=181)),
+('pca', PCAForEachChannel()),
+('lasso', Lasso())]
+ 
+ 
+parameters used:
+{'spatial_filter__n_components': [4],
+'pca__n_components': [8],
+'lasso__alpha': [3e-07]}
+
+
+scores:
+AUROC   corr     r2
+0.906  0.582  0.270
+0.927  0.510  0.166
+averaged:
+0.92±0.01    0.55±0.04    0.22±0.05 
