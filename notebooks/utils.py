@@ -249,7 +249,6 @@ def create_df_data(
     personal: bool
         whether a model will be both trained and tested on epochs from one person
         if false, person's epochs aren't split into test and train
-        and people aren't rejected if they have too few epochs
 
 
     Returns
