@@ -1,3 +1,575 @@
+All experiments:
+
+
+PCA
+AUROC         corr 
+{'lasso__alpha': 1e-08, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                            
+ 0.91±0.01    0.54±0.04 
+
+{'lasso__alpha': 3e-08, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                            
+ 0.91±0.01    0.54±0.04
+
+{'lasso__alpha': 1e-07, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                            
+ 0.91±0.01    0.54±0.03  
+
+{'lasso__alpha': 3e-07, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                            
+ 0.91±0.01    0.54±0.03
+
+{'lasso__alpha': 1e-06, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                            
+ 0.91±0.01    0.52±0.02
+
+{'lasso__alpha': 3e-06, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                            
+ 0.89±0.01    0.47±0.02
+
+{'lasso__alpha': 1e-05, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                            
+ 0.87±0.01    0.44±0.01
+
+ 
+ 
+ ICA
+ AUROC   corr
+{'lasso__alpha': 0, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                                
+ 0.91±0.01    0.54±0.04
+
+{'lasso__alpha': 1e-08, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                            
+ 0.91±0.01    0.54±0.04   
+
+{'lasso__alpha': 3e-08, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                            
+ 0.91±0.01    0.54±0.04
+
+{'lasso__alpha': 1e-07, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                            
+ 0.91±0.01    0.54±0.04
+
+{'lasso__alpha': 3e-07, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                            
+ 0.91±0.01    0.54±0.04
+
+{'lasso__alpha': 1e-06, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                            
+ 0.91±0.01    0.54±0.04
+
+{'lasso__alpha': 3e-06, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                            
+ 0.91±0.01    0.54±0.04
+
+{'lasso__alpha': 1e-05, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                            
+ 0.91±0.01    0.54±0.03
+
+{'lasso__alpha': 3e-05, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                            
+ 0.91±0.01    0.53±0.03
+
+{'lasso__alpha': 0.0001, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                           
+ 0.89±0.02    0.49±0.01
+
+{'lasso__alpha': 0.0003, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                           
+ 0.77±0.08    0.30±0.07
+
+{'lasso__alpha': 0.001, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                            
+ 0.50±0.00   -0.00±0.00
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+PCA - wide grid search - full CV results
+
+AUROC   corr     r2
+0.688  0.223  0.012
+0.707  0.191  -0.025
+{'lasso__alpha': 0, 'pca__n_components': 1, 'spatial_filter__n_components': 1}                                                
+ 0.70±0.01    0.21±0.02   -0.01±0.02   
+0.693  0.230  0.018
+0.722  0.204  -0.015
+{'lasso__alpha': 0, 'pca__n_components': 1, 'spatial_filter__n_components': 2}                                                
+ 0.71±0.01    0.22±0.01    0.00±0.02   
+0.711  0.255  0.032
+0.742  0.227  -0.003
+{'lasso__alpha': 0, 'pca__n_components': 1, 'spatial_filter__n_components': 3}                                                
+ 0.73±0.02    0.24±0.01    0.01±0.02   
+0.723  0.269  0.039
+0.759  0.245  0.005
+{'lasso__alpha': 0, 'pca__n_components': 1, 'spatial_filter__n_components': 4}                                                
+ 0.74±0.02    0.26±0.01    0.02±0.02   
+0.736  0.286  0.048
+0.770  0.260  0.013
+{'lasso__alpha': 0, 'pca__n_components': 1, 'spatial_filter__n_components': 5}                                                
+ 0.75±0.02    0.27±0.01    0.03±0.02   
+0.738  0.288  0.049
+0.770  0.259  0.012
+{'lasso__alpha': 0, 'pca__n_components': 1, 'spatial_filter__n_components': 6}                                                
+ 0.75±0.02    0.27±0.01    0.03±0.02   
+0.726  0.272  0.031
+0.738  0.228  -0.021
+{'lasso__alpha': 0, 'pca__n_components': 2, 'spatial_filter__n_components': 1}                                                
+ 0.73±0.01    0.25±0.02    0.01±0.03   
+0.765  0.326  0.062
+0.776  0.262  -0.009
+{'lasso__alpha': 0, 'pca__n_components': 2, 'spatial_filter__n_components': 2}                                                
+ 0.77±0.01    0.29±0.03    0.03±0.04   
+0.773  0.344  0.078
+0.798  0.288  0.011
+{'lasso__alpha': 0, 'pca__n_components': 2, 'spatial_filter__n_components': 3}                                                
+ 0.79±0.01    0.32±0.03    0.04±0.03   
+0.783  0.360  0.090
+0.820  0.317  0.034
+{'lasso__alpha': 0, 'pca__n_components': 2, 'spatial_filter__n_components': 4}                                                
+ 0.80±0.02    0.34±0.02    0.06±0.03   
+0.830  0.429  0.144
+0.865  0.374  0.073
+{'lasso__alpha': 0, 'pca__n_components': 2, 'spatial_filter__n_components': 5}                                                
+ 0.85±0.02    0.40±0.03    0.11±0.04   
+0.835  0.436  0.148
+0.865  0.372  0.068
+{'lasso__alpha': 0, 'pca__n_components': 2, 'spatial_filter__n_components': 6}                                                
+ 0.85±0.02    0.40±0.03    0.11±0.04   
+0.873  0.481  0.179
+0.887  0.431  0.103
+{'lasso__alpha': 0, 'pca__n_components': 3, 'spatial_filter__n_components': 1}                                                
+ 0.88±0.01    0.46±0.03    0.14±0.04   
+0.893  0.521  0.220
+0.907  0.450  0.121
+{'lasso__alpha': 0, 'pca__n_components': 3, 'spatial_filter__n_components': 2}                                                
+ 0.90±0.01    0.49±0.04    0.17±0.05   
+0.898  0.537  0.237
+0.914  0.459  0.130
+{'lasso__alpha': 0, 'pca__n_components': 3, 'spatial_filter__n_components': 3}                                                
+ 0.91±0.01    0.50±0.04    0.18±0.05   
+0.903  0.556  0.258
+0.924  0.487  0.154
+{'lasso__alpha': 0, 'pca__n_components': 3, 'spatial_filter__n_components': 4}                                                
+ 0.91±0.01    0.52±0.03    0.21±0.05   
+0.907  0.572  0.280
+0.933  0.504  0.172
+{'lasso__alpha': 0, 'pca__n_components': 3, 'spatial_filter__n_components': 5}                                                
+ 0.92±0.01    0.54±0.03    0.23±0.05   
+0.909  0.579  0.287
+0.933  0.504  0.171
+{'lasso__alpha': 0, 'pca__n_components': 3, 'spatial_filter__n_components': 6}                                                
+ 0.92±0.01    0.54±0.04    0.23±0.06   
+0.865  0.471  0.176
+0.883  0.422  0.086
+{'lasso__alpha': 0, 'pca__n_components': 4, 'spatial_filter__n_components': 1}                                                
+ 0.87±0.01    0.45±0.02    0.13±0.04   
+0.892  0.523  0.223
+0.907  0.454  0.105
+{'lasso__alpha': 0, 'pca__n_components': 4, 'spatial_filter__n_components': 2}                                                
+ 0.90±0.01    0.49±0.03    0.16±0.06   
+0.899  0.545  0.244
+0.914  0.465  0.115
+{'lasso__alpha': 0, 'pca__n_components': 4, 'spatial_filter__n_components': 3}                                                
+ 0.91±0.01    0.51±0.04    0.18±0.06   
+0.902  0.565  0.264
+0.923  0.497  0.147
+{'lasso__alpha': 0, 'pca__n_components': 4, 'spatial_filter__n_components': 4}                                                
+ 0.91±0.01    0.53±0.03    0.21±0.06   
+0.907  0.583  0.288
+0.932  0.515  0.170
+{'lasso__alpha': 0, 'pca__n_components': 4, 'spatial_filter__n_components': 5}                                                
+ 0.92±0.01    0.55±0.03    0.23±0.06   
+0.910  0.604  0.310
+0.932  0.514  0.169
+{'lasso__alpha': 0, 'pca__n_components': 4, 'spatial_filter__n_components': 6}                                                
+ 0.92±0.01    0.56±0.04    0.24±0.07   
+0.867  0.479  0.182
+0.882  0.426  0.089
+{'lasso__alpha': 0, 'pca__n_components': 5, 'spatial_filter__n_components': 1}                                                
+ 0.87±0.01    0.45±0.03    0.14±0.05   
+0.892  0.528  0.227
+0.904  0.455  0.104
+{'lasso__alpha': 0, 'pca__n_components': 5, 'spatial_filter__n_components': 2}                                                
+ 0.90±0.01    0.49±0.04    0.17±0.06   
+0.898  0.549  0.248
+0.912  0.467  0.116
+{'lasso__alpha': 0, 'pca__n_components': 5, 'spatial_filter__n_components': 3}                                                
+ 0.91±0.01    0.51±0.04    0.18±0.07   
+0.903  0.574  0.275
+0.921  0.503  0.153
+{'lasso__alpha': 0, 'pca__n_components': 5, 'spatial_filter__n_components': 4}                                                
+ 0.91±0.01    0.54±0.04    0.21±0.06   
+0.908  0.591  0.298
+0.931  0.520  0.177
+{'lasso__alpha': 0, 'pca__n_components': 5, 'spatial_filter__n_components': 5}                                                
+ 0.92±0.01    0.56±0.04    0.24±0.06   
+0.909  0.613  0.323
+0.932  0.520  0.176
+{'lasso__alpha': 0, 'pca__n_components': 5, 'spatial_filter__n_components': 6}                                                
+ 0.92±0.01    0.57±0.05    0.25±0.07   
+0.864  0.482  0.185
+0.881  0.429  0.092
+{'lasso__alpha': 0, 'pca__n_components': 6, 'spatial_filter__n_components': 1}                                                
+ 0.87±0.01    0.46±0.03    0.14±0.05   
+0.890  0.530  0.231
+0.906  0.464  0.116
+{'lasso__alpha': 0, 'pca__n_components': 6, 'spatial_filter__n_components': 2}                                                
+ 0.90±0.01    0.50±0.03    0.17±0.06   
+0.896  0.552  0.253
+0.914  0.476  0.128
+{'lasso__alpha': 0, 'pca__n_components': 6, 'spatial_filter__n_components': 3}                                                
+ 0.90±0.01    0.51±0.04    0.19±0.06   
+0.901  0.580  0.282
+0.921  0.508  0.161
+{'lasso__alpha': 0, 'pca__n_components': 6, 'spatial_filter__n_components': 4}                                                
+ 0.91±0.01    0.54±0.04    0.22±0.06   
+0.906  0.597  0.306
+0.932  0.525  0.183
+{'lasso__alpha': 0, 'pca__n_components': 6, 'spatial_filter__n_components': 5}                                                
+ 0.92±0.01    0.56±0.04    0.24±0.06   
+0.907  0.617  0.329
+0.932  0.524  0.181
+{'lasso__alpha': 0, 'pca__n_components': 6, 'spatial_filter__n_components': 6}                                                
+ 0.92±0.01    0.57±0.05    0.26±0.07   
+0.861  0.478  0.183
+0.880  0.427  0.090
+{'lasso__alpha': 0, 'pca__n_components': 7, 'spatial_filter__n_components': 1}                                                
+ 0.87±0.01    0.45±0.03    0.14±0.05   
+0.886  0.527  0.230
+0.906  0.462  0.113
+{'lasso__alpha': 0, 'pca__n_components': 7, 'spatial_filter__n_components': 2}                                                
+ 0.90±0.01    0.49±0.03    0.17±0.06   
+0.894  0.550  0.252
+0.913  0.473  0.125
+{'lasso__alpha': 0, 'pca__n_components': 7, 'spatial_filter__n_components': 3}                                                
+ 0.90±0.01    0.51±0.04    0.19±0.06   
+0.898  0.576  0.281
+0.920  0.506  0.156
+{'lasso__alpha': 0, 'pca__n_components': 7, 'spatial_filter__n_components': 4}                                                
+ 0.91±0.01    0.54±0.04    0.22±0.06   
+0.904  0.593  0.303
+0.930  0.522  0.177
+{'lasso__alpha': 0, 'pca__n_components': 7, 'spatial_filter__n_components': 5}                                                
+ 0.92±0.01    0.56±0.04    0.24±0.06   
+0.906  0.614  0.327
+0.930  0.520  0.173
+{'lasso__alpha': 0, 'pca__n_components': 7, 'spatial_filter__n_components': 6}                                                
+ 0.92±0.01    0.57±0.05    0.25±0.08   
+0.861  0.478  0.183
+0.881  0.426  0.088
+{'lasso__alpha': 0, 'pca__n_components': 8, 'spatial_filter__n_components': 1}                                                
+ 0.87±0.01    0.45±0.03    0.14±0.05   
+0.888  0.531  0.233
+0.906  0.462  0.112
+{'lasso__alpha': 0, 'pca__n_components': 8, 'spatial_filter__n_components': 2}                                                
+ 0.90±0.01    0.50±0.03    0.17±0.06   
+0.895  0.553  0.255
+0.913  0.473  0.123
+{'lasso__alpha': 0, 'pca__n_components': 8, 'spatial_filter__n_components': 3}                                                
+ 0.90±0.01    0.51±0.04    0.19±0.07   
+0.899  0.579  0.283
+0.920  0.506  0.155
+{'lasso__alpha': 0, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                                
+ 0.91±0.01    0.54±0.04    0.22±0.06   
+0.904  0.595  0.306
+0.931  0.522  0.176
+{'lasso__alpha': 0, 'pca__n_components': 8, 'spatial_filter__n_components': 5}                                                
+ 0.92±0.01    0.56±0.04    0.24±0.07   
+0.906  0.615  0.329
+0.930  0.520  0.171
+{'lasso__alpha': 0, 'pca__n_components': 8, 'spatial_filter__n_components': 6}                                                
+ 0.92±0.01    0.57±0.05    0.25±0.08   
+0.861  0.477  0.183
+0.880  0.426  0.087
+{'lasso__alpha': 0, 'pca__n_components': 9, 'spatial_filter__n_components': 1}                                                
+ 0.87±0.01    0.45±0.03    0.14±0.05   
+0.888  0.531  0.233
+0.906  0.461  0.110
+{'lasso__alpha': 0, 'pca__n_components': 9, 'spatial_filter__n_components': 2}                                                
+ 0.90±0.01    0.50±0.03    0.17±0.06   
+0.895  0.554  0.256
+0.913  0.473  0.122
+{'lasso__alpha': 0, 'pca__n_components': 9, 'spatial_filter__n_components': 3}                                                
+ 0.90±0.01    0.51±0.04    0.19±0.07   
+0.899  0.579  0.284
+0.920  0.505  0.154
+{'lasso__alpha': 0, 'pca__n_components': 9, 'spatial_filter__n_components': 4}                                                
+ 0.91±0.01    0.54±0.04    0.22±0.07   
+0.904  0.596  0.307
+0.930  0.522  0.174
+{'lasso__alpha': 0, 'pca__n_components': 9, 'spatial_filter__n_components': 5}                                                
+ 0.92±0.01    0.56±0.04    0.24±0.07   
+0.907  0.615  0.329
+0.930  0.519  0.170
+{'lasso__alpha': 0, 'pca__n_components': 9, 'spatial_filter__n_components': 6}                                                
+ 0.92±0.01    0.57±0.05    0.25±0.08   
+0.861  0.477  0.183
+0.880  0.425  0.086
+{'lasso__alpha': 0, 'pca__n_components': 10, 'spatial_filter__n_components': 1}                                               
+ 0.87±0.01    0.45±0.03    0.13±0.05   
+0.888  0.531  0.233
+0.905  0.460  0.108
+{'lasso__alpha': 0, 'pca__n_components': 10, 'spatial_filter__n_components': 2}                                               
+ 0.90±0.01    0.50±0.04    0.17±0.06   
+0.895  0.553  0.256
+0.912  0.471  0.120
+{'lasso__alpha': 0, 'pca__n_components': 10, 'spatial_filter__n_components': 3}                                               
+ 0.90±0.01    0.51±0.04    0.19±0.07   
+0.899  0.578  0.284
+0.919  0.504  0.151
+{'lasso__alpha': 0, 'pca__n_components': 10, 'spatial_filter__n_components': 4}                                               
+ 0.91±0.01    0.54±0.04    0.22±0.07   
+0.904  0.594  0.306
+0.930  0.520  0.171
+{'lasso__alpha': 0, 'pca__n_components': 10, 'spatial_filter__n_components': 5}                                               
+ 0.92±0.01    0.56±0.04    0.24±0.07   
+0.906  0.614  0.329
+0.929  0.518  0.167
+{'lasso__alpha': 0, 'pca__n_components': 10, 'spatial_filter__n_components': 6}                                               
+ 0.92±0.01    0.57±0.05    0.25±0.08   
+CPU times: user 27min 43s, sys: 14min 30s, total: 42min 14s
+Wall time: 13min 6s
+
+
+
+
+
+ICA - wide grid search full CV results
+
+0.688  0.223  0.012
+0.707  0.191  -0.025
+{'lasso__alpha': 0, 'pca__n_components': 1, 'spatial_filter__n_components': 1}                                                
+ 0.70±0.01    0.21±0.02   -0.01±0.02   
+0.693  0.230  0.018
+0.722  0.204  -0.015
+{'lasso__alpha': 0, 'pca__n_components': 1, 'spatial_filter__n_components': 2}                                                
+ 0.71±0.01    0.22±0.01    0.00±0.02   
+0.712  0.256  0.032
+0.741  0.226  -0.003
+{'lasso__alpha': 0, 'pca__n_components': 1, 'spatial_filter__n_components': 3}                                                
+ 0.73±0.01    0.24±0.01    0.01±0.02   
+0.724  0.270  0.040
+0.762  0.248  0.007
+{'lasso__alpha': 0, 'pca__n_components': 1, 'spatial_filter__n_components': 4}                                                
+ 0.74±0.02    0.26±0.01    0.02±0.02   
+0.735  0.285  0.048
+0.771  0.260  0.013
+{'lasso__alpha': 0, 'pca__n_components': 1, 'spatial_filter__n_components': 5}                                                
+ 0.75±0.02    0.27±0.01    0.03±0.02   
+0.739  0.289  0.050
+0.771  0.260  0.013
+{'lasso__alpha': 0, 'pca__n_components': 1, 'spatial_filter__n_components': 6}                                                
+ 0.75±0.02    0.27±0.01    0.03±0.02   
+0.726  0.272  0.031
+0.738  0.228  -0.021
+{'lasso__alpha': 0, 'pca__n_components': 2, 'spatial_filter__n_components': 1}                                                
+ 0.73±0.01    0.25±0.02    0.01±0.03   
+0.766  0.327  0.063
+0.776  0.262  -0.009
+{'lasso__alpha': 0, 'pca__n_components': 2, 'spatial_filter__n_components': 2}                                                
+ 0.77±0.00    0.29±0.03    0.03±0.04   
+0.774  0.346  0.079
+0.788  0.276  0.007
+{'lasso__alpha': 0, 'pca__n_components': 2, 'spatial_filter__n_components': 3}                                                
+ 0.78±0.01    0.31±0.03    0.04±0.04   
+0.791  0.371  0.098
+0.820  0.322  0.035
+{'lasso__alpha': 0, 'pca__n_components': 2, 'spatial_filter__n_components': 4}                                                
+ 0.81±0.01    0.35±0.02    0.07±0.03   
+0.843  0.449  0.160
+0.853  0.358  0.061
+{'lasso__alpha': 0, 'pca__n_components': 2, 'spatial_filter__n_components': 5}                                                
+ 0.85±0.01    0.40±0.05    0.11±0.05   
+0.830  0.427  0.144
+0.853  0.355  0.055
+{'lasso__alpha': 0, 'pca__n_components': 2, 'spatial_filter__n_components': 6}                                                
+ 0.84±0.01    0.39±0.04    0.10±0.04   
+0.873  0.481  0.179
+0.887  0.431  0.103
+{'lasso__alpha': 0, 'pca__n_components': 3, 'spatial_filter__n_components': 1}                                                
+ 0.88±0.01    0.46±0.03    0.14±0.04   
+0.893  0.521  0.220
+0.907  0.450  0.121
+{'lasso__alpha': 0, 'pca__n_components': 3, 'spatial_filter__n_components': 2}                                                
+ 0.90±0.01    0.49±0.04    0.17±0.05   
+0.898  0.540  0.240
+0.913  0.456  0.126
+{'lasso__alpha': 0, 'pca__n_components': 3, 'spatial_filter__n_components': 3}                                                
+ 0.91±0.01    0.50±0.04    0.18±0.06   
+0.901  0.554  0.254
+0.923  0.495  0.162
+{'lasso__alpha': 0, 'pca__n_components': 3, 'spatial_filter__n_components': 4}                                                
+ 0.91±0.01    0.52±0.03    0.21±0.05   
+0.906  0.570  0.275
+0.932  0.509  0.176
+{'lasso__alpha': 0, 'pca__n_components': 3, 'spatial_filter__n_components': 5}                                                
+ 0.92±0.01    0.54±0.03    0.23±0.05   
+0.908  0.582  0.287
+0.932  0.509  0.175
+{'lasso__alpha': 0, 'pca__n_components': 3, 'spatial_filter__n_components': 6}                                                
+ 0.92±0.01    0.55±0.04    0.23±0.06   
+0.865  0.471  0.176
+0.883  0.422  0.086
+{'lasso__alpha': 0, 'pca__n_components': 4, 'spatial_filter__n_components': 1}                                                
+ 0.87±0.01    0.45±0.02    0.13±0.04   
+0.892  0.523  0.223
+0.907  0.454  0.105
+{'lasso__alpha': 0, 'pca__n_components': 4, 'spatial_filter__n_components': 2}                                                
+ 0.90±0.01    0.49±0.03    0.16±0.06   
+0.899  0.545  0.244
+0.915  0.465  0.116
+{'lasso__alpha': 0, 'pca__n_components': 4, 'spatial_filter__n_components': 3}                                                
+ 0.91±0.01    0.51±0.04    0.18±0.06   
+0.903  0.569  0.267
+0.922  0.498  0.146
+{'lasso__alpha': 0, 'pca__n_components': 4, 'spatial_filter__n_components': 4}                                                
+ 0.91±0.01    0.53±0.04    0.21±0.06   
+0.908  0.588  0.292
+0.932  0.516  0.171
+{'lasso__alpha': 0, 'pca__n_components': 4, 'spatial_filter__n_components': 5}                                                
+ 0.92±0.01    0.55±0.04    0.23±0.06   
+0.910  0.604  0.310
+0.932  0.515  0.170
+{'lasso__alpha': 0, 'pca__n_components': 4, 'spatial_filter__n_components': 6}                                                
+ 0.92±0.01    0.56±0.04    0.24±0.07   
+0.867  0.479  0.182
+0.882  0.426  0.089
+{'lasso__alpha': 0, 'pca__n_components': 5, 'spatial_filter__n_components': 1}                                                
+ 0.87±0.01    0.45±0.03    0.14±0.05   
+0.892  0.528  0.227
+0.904  0.455  0.104
+{'lasso__alpha': 0, 'pca__n_components': 5, 'spatial_filter__n_components': 2}                                                
+ 0.90±0.01    0.49±0.04    0.17±0.06   
+0.901  0.557  0.255
+0.912  0.466  0.115
+{'lasso__alpha': 0, 'pca__n_components': 5, 'spatial_filter__n_components': 3}                                                
+ 0.91±0.01    0.51±0.05    0.19±0.07   
+0.904  0.584  0.285
+0.920  0.505  0.155
+{'lasso__alpha': 0, 'pca__n_components': 5, 'spatial_filter__n_components': 4}                                                
+ 0.91±0.01    0.54±0.04    0.22±0.06   
+0.908  0.592  0.298
+0.931  0.522  0.179
+{'lasso__alpha': 0, 'pca__n_components': 5, 'spatial_filter__n_components': 5}                                                
+ 0.92±0.01    0.56±0.04    0.24±0.06   
+0.912  0.616  0.323
+0.931  0.521  0.178
+{'lasso__alpha': 0, 'pca__n_components': 5, 'spatial_filter__n_components': 6}                                                
+ 0.92±0.01    0.57±0.05    0.25±0.07   
+0.864  0.482  0.185
+0.881  0.429  0.092
+{'lasso__alpha': 0, 'pca__n_components': 6, 'spatial_filter__n_components': 1}                                                
+ 0.87±0.01    0.46±0.03    0.14±0.05   
+0.890  0.530  0.231
+0.906  0.464  0.116
+{'lasso__alpha': 0, 'pca__n_components': 6, 'spatial_filter__n_components': 2}                                                
+ 0.90±0.01    0.50±0.03    0.17±0.06   
+0.898  0.558  0.258
+0.914  0.474  0.126
+{'lasso__alpha': 0, 'pca__n_components': 6, 'spatial_filter__n_components': 3}                                                
+ 0.91±0.01    0.52±0.04    0.19±0.07   
+0.903  0.584  0.286
+0.919  0.507  0.157
+{'lasso__alpha': 0, 'pca__n_components': 6, 'spatial_filter__n_components': 4}                                                
+ 0.91±0.01    0.55±0.04    0.22±0.06   
+0.907  0.595  0.302
+0.931  0.523  0.182
+{'lasso__alpha': 0, 'pca__n_components': 6, 'spatial_filter__n_components': 5}                                                
+ 0.92±0.01    0.56±0.04    0.24±0.06   
+0.908  0.618  0.329
+0.930  0.522  0.179
+{'lasso__alpha': 0, 'pca__n_components': 6, 'spatial_filter__n_components': 6}                                                
+ 0.92±0.01    0.57±0.05    0.25±0.07   
+0.861  0.478  0.183
+0.880  0.427  0.090
+{'lasso__alpha': 0, 'pca__n_components': 7, 'spatial_filter__n_components': 1}                                                
+ 0.87±0.01    0.45±0.03    0.14±0.05   
+0.886  0.527  0.230
+0.906  0.462  0.113
+{'lasso__alpha': 0, 'pca__n_components': 7, 'spatial_filter__n_components': 2}                                                
+ 0.90±0.01    0.49±0.03    0.17±0.06   
+0.898  0.558  0.259
+0.913  0.472  0.123
+{'lasso__alpha': 0, 'pca__n_components': 7, 'spatial_filter__n_components': 3}                                                
+ 0.91±0.01    0.52±0.04    0.19±0.07   
+0.901  0.580  0.284
+0.919  0.506  0.156
+{'lasso__alpha': 0, 'pca__n_components': 7, 'spatial_filter__n_components': 4}                                                
+ 0.91±0.01    0.54±0.04    0.22±0.06   
+0.906  0.595  0.305
+0.930  0.522  0.179
+{'lasso__alpha': 0, 'pca__n_components': 7, 'spatial_filter__n_components': 5}                                                
+ 0.92±0.01    0.56±0.04    0.24±0.06   
+0.906  0.614  0.327
+0.930  0.520  0.176
+{'lasso__alpha': 0, 'pca__n_components': 7, 'spatial_filter__n_components': 6}                                                
+ 0.92±0.01    0.57±0.05    0.25±0.08   
+0.861  0.478  0.183
+0.881  0.426  0.088
+{'lasso__alpha': 0, 'pca__n_components': 8, 'spatial_filter__n_components': 1}                                                
+ 0.87±0.01    0.45±0.03    0.14±0.05   
+0.888  0.531  0.233
+0.906  0.462  0.112
+{'lasso__alpha': 0, 'pca__n_components': 8, 'spatial_filter__n_components': 2}                                                
+ 0.90±0.01    0.50±0.03    0.17±0.06   
+0.898  0.557  0.258
+0.913  0.472  0.122
+{'lasso__alpha': 0, 'pca__n_components': 8, 'spatial_filter__n_components': 3}                                                
+ 0.91±0.01    0.51±0.04    0.19±0.07   
+0.900  0.580  0.284
+0.920  0.506  0.155
+{'lasso__alpha': 0, 'pca__n_components': 8, 'spatial_filter__n_components': 4}                                                
+ 0.91±0.01    0.54±0.04    0.22±0.06   
+0.905  0.595  0.306
+0.931  0.522  0.177
+{'lasso__alpha': 0, 'pca__n_components': 8, 'spatial_filter__n_components': 5}                                                
+ 0.92±0.01    0.56±0.04    0.24±0.06   
+0.906  0.615  0.329
+0.930  0.520  0.173
+{'lasso__alpha': 0, 'pca__n_components': 8, 'spatial_filter__n_components': 6}                                                
+ 0.92±0.01    0.57±0.05    0.25±0.08   
+0.861  0.477  0.183
+0.880  0.426  0.087
+{'lasso__alpha': 0, 'pca__n_components': 9, 'spatial_filter__n_components': 1}                                                
+ 0.87±0.01    0.45±0.03    0.14±0.05   
+0.888  0.530  0.233
+0.906  0.461  0.110
+{'lasso__alpha': 0, 'pca__n_components': 9, 'spatial_filter__n_components': 2}                                                
+ 0.90±0.01    0.50±0.03    0.17±0.06   
+0.897  0.556  0.258
+0.913  0.472  0.120
+{'lasso__alpha': 0, 'pca__n_components': 9, 'spatial_filter__n_components': 3}                                                
+ 0.91±0.01    0.51±0.04    0.19±0.07   
+0.900  0.580  0.285
+0.919  0.505  0.153
+{'lasso__alpha': 0, 'pca__n_components': 9, 'spatial_filter__n_components': 4}                                                
+ 0.91±0.01    0.54±0.04    0.22±0.07   
+0.905  0.595  0.307
+0.930  0.522  0.175
+{'lasso__alpha': 0, 'pca__n_components': 9, 'spatial_filter__n_components': 5}                                                
+ 0.92±0.01    0.56±0.04    0.24±0.07   
+0.907  0.615  0.329
+0.930  0.520  0.172
+{'lasso__alpha': 0, 'pca__n_components': 9, 'spatial_filter__n_components': 6}                                                
+ 0.92±0.01    0.57±0.05    0.25±0.08   
+0.861  0.477  0.183
+0.880  0.425  0.086
+{'lasso__alpha': 0, 'pca__n_components': 10, 'spatial_filter__n_components': 1}                                               
+ 0.87±0.01    0.45±0.03    0.13±0.05   
+0.888  0.530  0.233
+0.905  0.460  0.108
+{'lasso__alpha': 0, 'pca__n_components': 10, 'spatial_filter__n_components': 2}                                               
+ 0.90±0.01    0.50±0.04    0.17±0.06   
+0.897  0.555  0.257
+0.912  0.470  0.118
+{'lasso__alpha': 0, 'pca__n_components': 10, 'spatial_filter__n_components': 3}                                               
+ 0.90±0.01    0.51±0.04    0.19±0.07   
+0.899  0.578  0.284
+0.919  0.504  0.152
+{'lasso__alpha': 0, 'pca__n_components': 10, 'spatial_filter__n_components': 4}                                               
+ 0.91±0.01    0.54±0.04    0.22±0.07   
+0.905  0.595  0.307
+0.930  0.521  0.175
+{'lasso__alpha': 0, 'pca__n_components': 10, 'spatial_filter__n_components': 5}                                               
+ 0.92±0.01    0.56±0.04    0.24±0.07   
+0.907  0.615  0.329
+0.930  0.519  0.171
+{'lasso__alpha': 0, 'pca__n_components': 10, 'spatial_filter__n_components': 6}                                               
+ 0.92±0.01    0.57±0.05    0.25±0.08   
+CPU times: user 1h 13min 15s, sys: 18min 38s, total: 1h 31min 54s
+Wall time: 21min 17s
+
+
+
+
+final model search for alpha
+
 steps used:
 [('pre_spatial_filter', IcaPreprocessing()),
 ('spatial_filter', PCA(random_state=0)),
@@ -5,16 +577,107 @@ steps used:
 ('pca', PCAForEachChannel()),
 ('lasso', Lasso())]
  
- 
 parameters used:
-{'spatial_filter__n_components': [4],
-'pca__n_components': [8],
-'lasso__alpha': [3e-07]}
+'spatial_filter__n_components': [5],
+'pca__n_components': [3],
 
-
-scores:
 AUROC   corr     r2
-0.906  0.582  0.270
-0.927  0.510  0.166
-averaged:
-0.92±0.01    0.55±0.04    0.22±0.05 
+0.907  0.572  0.280
+0.933  0.504  0.172
+{'lasso__alpha': 0, 'pca__n_components': 3, 'spatial_filter__n_components': 5}                                                
+ 0.92±0.01    0.54±0.03    0.23±0.05   
+0.908  0.572  0.276
+0.932  0.504  0.178
+{'lasso__alpha': 1e-07, 'pca__n_components': 3, 'spatial_filter__n_components': 5}                                            
+ 0.92±0.01    0.54±0.03    0.23±0.05   
+0.908  0.570  0.268
+0.931  0.503  0.185
+{'lasso__alpha': 3e-07, 'pca__n_components': 3, 'spatial_filter__n_components': 5}                                            
+ 0.92±0.01    0.54±0.03    0.23±0.04   
+0.904  0.548  0.234
+0.927  0.499  0.198
+{'lasso__alpha': 1e-06, 'pca__n_components': 3, 'spatial_filter__n_components': 5}                                            
+ 0.92±0.01    0.52±0.02    0.22±0.02   
+0.877  0.491  0.169
+0.908  0.464  0.168
+{'lasso__alpha': 3e-06, 'pca__n_components': 3, 'spatial_filter__n_components': 5}                                            
+ 0.89±0.02    0.48±0.01    0.17±0.00   
+0.852  0.451  0.097
+0.882  0.426  0.135
+{'lasso__alpha': 1e-05, 'pca__n_components': 3, 'spatial_filter__n_components': 5}                                            
+ 0.87±0.01    0.44±0.01    0.12±0.02   
+0.688  0.223  -0.033
+0.807  0.306  0.007
+{'lasso__alpha': 3e-05, 'pca__n_components': 3, 'spatial_filter__n_components': 5}                                            
+ 0.75±0.06    0.26±0.04   -0.01±0.02   
+0.500  -0.000  -0.037
+0.500  -0.000  -0.067
+{'lasso__alpha': 0.0001, 'pca__n_components': 3, 'spatial_filter__n_components': 5}                                           
+ 0.50±0.00   -0.00±0.00   -0.05±0.01   
+CPU times: user 1min 51s, sys: 1h 38min 29s, total: 1h 40min 20s
+Wall time: 1h 39min 18s
+
+
+
+
+
+
+
+chosen alpha = 1e-6
+
+final score
+corr    0.5424830144999965
+AUROC   0.9154600741139204
+
+
+
+
+reliability for ICA:
+[('pre_spatial_filter', IcaPreprocessing()),
+ ('spatial_filter', FastICA(random_state=0)),
+ ('post_spatial_filter', IcaPostprocessing(timepoints_count=181)),
+ ('pca', PCAForEachChannel()),
+ ('lasso', Lasso())]
+
+AUROC   corr     r2
+0.906  0.570  0.274
+0.932  0.509  0.178
+{'spatial_filter__n_components': 5, 'pca__n_components': 3, 'lasso__alpha': 1e-06}                                            
+ 0.92±0.01    0.54±0.03    0.23±0.05
+
+correlations between factors found in the first, and the second split
+[[ 0.687  0.293 -0.474 -0.592  0.755]
+ [ 0.484  0.674 -0.503 -0.621 -0.467]
+ [-0.306  0.466  0.357 -0.826  0.186]
+ [-0.057 -0.913 -0.065  0.669 -0.39 ]
+ [-0.771  0.205  0.94  -0.181  0.01 ]]
+
+factor similarity
+0.8216900139842125
+
+
+
+
+
+reliability for PCA:
+[('pre_spatial_filter', IcaPreprocessing()),
+ ('spatial_filter', PCA(random_state=0)),
+ ('post_spatial_filter', IcaPostprocessing(timepoints_count=181)),
+ ('pca', PCAForEachChannel()),
+ ('lasso', Lasso())]
+
+AUROC   corr     r2
+0.904  0.548  0.234
+0.927  0.499  0.198
+{'spatial_filter__n_components': 5, 'pca__n_components': 3, 'lasso__alpha': 1e-06}                                            
+ 0.92±0.01    0.52±0.02    0.22±0.02   
+
+correlations between factors found in the first, and the second split
+[[ 0.999 -0.03  -0.003 -0.006  0.001]
+ [ 0.03   0.999  0.018  0.022  0.002]
+ [-0.     0.012 -0.963  0.259 -0.026]
+ [ 0.005 -0.026  0.26   0.963 -0.025]
+ [-0.001 -0.002 -0.016  0.032  0.996]]
+
+factor similarity
+0.984023623953394

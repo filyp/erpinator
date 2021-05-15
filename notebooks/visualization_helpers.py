@@ -127,11 +127,14 @@ def plot_erps_after_spatial_filter(
     err_mean = err.mean(axis=0)
     err_erp = np.tensordot(err_mean, spatial_filter, axes=([0], [0]))
     cor_erp = np.tensordot(cor_mean, spatial_filter, axes=([0], [0]))
+    dif_erp = cor_erp - err_erp
 
     if erp_type == "correct":
         fig.add_scatter(x=times, y=cor_erp, line_width=5, line_color="green")
     elif erp_type == "error":
         fig.add_scatter(x=times, y=err_erp, line_width=5, line_color="red")
+    elif erp_type == "difference":
+        fig.add_scatter(x=times, y=dif_erp, line_width=5, line_color="orange")
 
     return fig
 

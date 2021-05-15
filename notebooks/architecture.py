@@ -569,7 +569,21 @@ steps_peaks_and_shape = [
     ("scaler", StandardScaler()),
     ("svr", SVR()),
 ]
+
+final_steps_gonogo_classification = [
+    ("pre_spatial_filter", IcaPreprocessing()),
+    ("spatial_filter", PCA(random_state=0)),
+    ("post_spatial_filter", IcaPostprocessing(timepoints_count=timepoints_count)),
+    ("pca", PCAForEachChannel(random_state=0)),
+    ("lasso", Lasso()),
+]
 # fmt: on
+
+final_regressor_params_gonogo_classification = dict(
+    spatial_filter__n_components=5,
+    pca__n_components=3,
+    lasso__alpha=0.000001,
+)
 
 # ######
 # the best pipelines so far and their scores for all participant are
