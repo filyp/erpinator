@@ -37,6 +37,7 @@ from scipy.signal import butter, lfilter
 from utils import cwt
 
 timepoints_count = 181
+signal_frequency = 256
 
 
 def std_signal(t, m, e):
@@ -45,6 +46,18 @@ def std_signal(t, m, e):
 
 def abs_diffs_signal(t, m, e):
     return np.sum(np.abs(np.diff(m)))
+
+
+def mean_energy_signal(t, m, e):
+    return np.mean(m ** 2)
+
+
+def skew_signal(t, m, e):
+    return scipy.stats.skew(m)
+
+
+def mean_signal(t, m, e):
+    return np.mean(m)
 
 
 def peak_ind(t, m, e):
@@ -150,6 +163,7 @@ class BinTransformer(TransformerMixin, BaseEstimator):
 
     def transform(self, X):
         binned_data = np.array([self.bin_epoch(epoch) for epoch in X])
+        return binned_data
 
 
 class IcaPreprocessing(TransformerMixin, BaseEstimator):
@@ -545,7 +559,7 @@ steps_peaks_and_shape = [
     ("featurize", FeatureUnion([
         ('peaks', Pipeline([
             ("cwt", Cwt(mwt="mexh")),
-            ("peak_finder", CwtPeakFinder()),
+            ("peak_finder", CwtPeakFinder())
         ])),
         ('shape', Pipeline([
             ("cwt", Cwt(mwt="mexh")),
@@ -555,7 +569,21 @@ steps_peaks_and_shape = [
     ("scaler", StandardScaler()),
     ("svr", SVR()),
 ]
+
+final_steps_gonogo_classification = [
+    ("pre_spatial_filter", IcaPreprocessing()),
+    ("spatial_filter", PCA(random_state=0)),
+    ("post_spatial_filter", IcaPostprocessing(timepoints_count=timepoints_count)),
+    ("pca", PCAForEachChannel(random_state=0)),
+    ("lasso", Lasso()),
+]
 # fmt: on
+
+final_regressor_params_gonogo_classification = dict(
+    spatial_filter__n_components=5,
+    pca__n_components=3,
+    lasso__alpha=0.000001,
+)
 
 # ######
 # the best pipelines so far and their scores for all participant are
@@ -574,3 +602,108 @@ steps_peaks_and_shape = [
 # LDA         0.91
 # SVR C=0.1   0.87
 # kNR n=11    0.86
+
+channels_order_list = [
+    "Fp1",
+    "AF7",
+    "AF3",
+    "F1",
+    "F3",
+    "F5",
+    "F7",
+    "FT7",
+    "FC5",
+    "FC3",
+    "FC1",
+    "C1",
+    "C3",
+    "C5",
+    "T7",
+    "TP7",
+    "CP5",
+    "CP3",
+    "CP1",
+    "P1",
+    "P3",
+    "P5",
+    "P7",
+    "P9",
+    "PO7",
+    "PO3",
+    "O1",
+    "Iz",
+    "Oz",
+    "POz",
+    "Pz",
+    "CPz",
+    "Fpz",
+    "Fp2",
+    "AF8",
+    "AF4",
+    "AFz",
+    "Fz",
+    "F2",
+    "F4",
+    "F6",
+    "F8",
+    "FT8",
+    "FC6",
+    "FC4",
+    "FC2",
+    "FCz",
+    "Cz",
+    "C2",
+    "C4",
+    "C6",
+    "T8",
+    "TP8",
+    "CP6",
+    "CP4",
+    "CP2",
+    "P2",
+    "P4",
+    "P6",
+    "P8",
+    "P10",
+    "PO8",
+    "PO4",
+    "O2",
+]
+channels_dict = dict(zip(channels_order_list, np.arange(1, 64, 1)))
+red_box = [
+    "F1",
+    "Fz",
+    "F2",
+    "FC1",
+    "FCz",
+    "FC2",
+    "C1",
+    "Cz",
+    "C2",
+    "CP1",
+    "CPz",
+    "CP2",
+    "P1",
+    "Pz",
+    "P2",
+]
+significant_channels = [channels_dict[channel] for channel in red_box]
+
+# fmt: off
+ica_bins_steps = [
+    ("channels_filtering", ChannelExtraction(significant_channels)),
+    ("ica_preprocessing", IcaPreprocessing()),
+    # ("ica", FastICA(random_state=random_state)),
+    ("spatial_filter", PCA(random_state=0)),
+    ("ica_postprocessing", IcaPostprocessing(timepoints_count=timepoints_count)),
+    ("lowpass_filter", LowpassFilter()),
+    ("channel_data_swap", ChannelDataSwap()),
+    ("binning", BinTransformer(step=12)),
+    ("data_channel_swap", ChannelDataSwap()),
+    ("postprocessing", PostprocessingTransformer()),
+    ("scaler", StandardScaler()),
+#     ("feature_selection", PCAForEachChannel(random_state=0)),
+    ("feature_selection", PCA(random_state=0)),
+    ("en", ElasticNet(random_state=0)),
+]
+# fmt: on
