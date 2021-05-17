@@ -1,0 +1,11 @@
+model chosen:
+PCA_4 SVC linear
+
+
+accuracy on train set:
+corr, accuracy
+0.4695301415158426, 0.7314814814814815
+
+accuracy on test (holdout) set:
+corr, accuracy
+0.2196969696969697, 0.6086956521739131

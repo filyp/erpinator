@@ -90,6 +90,8 @@ def plot_erps_after_spatial_filter(
         width=600 * scale,
         xaxis_range=[times[0], times[-1]],
         yaxis_range=[-max_amp, max_amp],
+        xaxis_title="time [seconds]",
+        yaxis_title="amplitude [V]",
     )
 
     # individual ERPs
@@ -219,7 +221,12 @@ def visualize_spatial_components(
 def plot_pca_shape(pca_comps, mwt, clf_coefs, xs, max_amp, scale=1, heatmap=False):
     fig = go.FigureWidget()
     fig.update_layout(**base_layout)
-    fig.update_layout(height=350 * scale, width=600 * scale)
+    fig.update_layout(
+        height=350 * scale,
+        width=600 * scale,
+        xaxis_title="time [seconds]",
+        yaxis_title="amplitude",
+    )
     if not heatmap:
         fig.update_layout(yaxis_range=[-max_amp, max_amp])
     accs = []
@@ -319,6 +326,8 @@ def visualize_pipeline(
             clf_coefs_all = fitted_steps["lr_en"].coef_[0]
         elif "lda" in fitted_steps:
             clf_coefs_all = fitted_steps["lda"].coef_[0]
+        elif "svc_lin" in fitted_steps:
+            clf_coefs_all = fitted_steps["svc_lin"].coef_[0]
 
     if "binning" in fitted_steps:
         bin_step = fitted_steps["binning"].step
