@@ -1,0 +1,9 @@
+model: PCA_15 elasticnet
+
+accuracy on train set:
+corr, r2
+0.38893214929616154, 0.15126821675563717
+
+accuracy on test (holdout) set:
+corr, r2
+0.010330922775716135, -0.1357893602936091
