@@ -1,0 +1,16 @@
+,data_set,pipeline_name,model,mean train accuracy,mean test accuracy,accuracy std,mean train precision,mean test precision,precision std,p-value,External validation accuracy,# spatial filter components,# selected features
+0,error,ICA_15_bins,svc_rbf,0.676,0.685,0.08,0.702,0.704,0.082,0.01,0.565,11,5
+1,error,ICA_15_bins,svc_lin,0.718,0.685,0.013,0.738,0.73,0.018,0.01,0.522,5,8
+2,error,ICA_15_bins,lr_en,0.676,0.694,0.023,0.685,0.74,0.042,0.01,0.522,5,8
+3,error,ICA_4_bins,lr_en,0.681,0.694,0.023,0.682,0.695,0.041,0.01,0.391,3,8
+4,error,ICA_4_bins,svc_rbf,0.671,0.676,0.035,0.735,0.733,0.04,0.01,0.565,3,5
+5,error,ICA_4_bins,svc_lin,0.708,0.685,0.057,0.729,0.698,0.052,0.01,0.565,2,8
+6,error,PCA_4_bins,svc_rbf,0.671,0.657,0.057,0.784,0.751,0.06,0.01,0.565,3,8
+7,error,PCA_4_bins,svc_lin,0.713,0.731,0.026,0.73,0.745,0.028,0.01,0.565,2,7
+8,error,PCA_4_bins,lr_en,0.685,0.694,0.023,0.7,0.695,0.041,0.01,0.565,2,7
+9,error,PCA_15_bins,svc_rbf,0.634,0.667,0.023,0.73,0.761,0.04,0.01,0.478,5,5
+10,error,PCA_15_bins,svc_lin,0.671,0.713,0.026,0.691,0.747,0.029,0.01,0.478,5,8
+11,error,PCA_15_bins,lr_en,0.685,0.713,0.047,0.696,0.744,0.048,0.01,0.478,5,8
+12,error,ERP_bins,svc_rbf,0.644,0.602,0.035,0.672,0.612,0.036,0.02,0.565,-,7
+13,error,ERP_bins,svc_lin,0.639,0.611,0.0,0.66,0.625,0.0,0.01,0.522,-,5
+14,error,ERP_bins,lr_en,0.657,0.62,0.069,0.671,0.633,0.077,0.03,0.478,-,8
