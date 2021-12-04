@@ -3,12 +3,13 @@ set -e
 
 python3.8 -m venv --copies venv
 source venv/bin/activate
+pip install wheel
 pip install -r requirements.txt
 python -m ipykernel install --user --name=erpinator
-deactivate
 
-pip install --user pre-commit
+pip install pre-commit
 pre-commit install
+deactivate
 
 # for plotly widget support
 pip install --user jupyterlab plotly==4.14.3 "ipywidgets>=7.5"
